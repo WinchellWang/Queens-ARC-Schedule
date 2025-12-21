@@ -11,41 +11,80 @@
 
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        .fc-event { cursor: pointer; }
+        .fc-event { cursor: pointer; border: none; }
+        /* Make events look a bit cleaner */
+        .fc-timegrid-event .fc-event-main { padding: 4px; }
     </style>
 </head>
 <body class="bg-gray-100 p-4">
 
-    <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Gym Schedule</h1>
+    <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 border-b pb-4">
+            <h1 class="text-3xl font-bold text-gray-800">Gym Schedule</h1>
             
             <div class="flex gap-2 mt-4 md:mt-0">
-                <a href="webcal://ifgical.api.pgaskin.net/110.ics" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
+                <a href="webcal://ifgical.api.pgaskin.net/110.ics" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/></svg>
-                    Sync to Phone (Subscribe)
+                    Sync to Phone
                 </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-gray-50 p-4 rounded-lg">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Activity Type</label>
+                <select id="activityFilter" onchange="applyFilters()" class="w-full p-2 border rounded shadow-sm focus:ring-2 focus:ring-blue-500">
+                    <option value="all">All Activities</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Location</label>
+                <select id="locationFilter" onchange="applyFilters()" class="w-full p-2 border rounded shadow-sm focus:ring-2 focus:ring-blue-500">
+                    <option value="all">All Locations</option>
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button onclick="resetFilters()" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded transition">
+                    Reset Filters
+                </button>
             </div>
         </div>
 
         <div id='calendar'></div>
     </div>
 
-    <div id="eventModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <h3 id="modalTitle" class="text-lg font-bold mb-2"></h3>
-            <p id="modalTime" class="text-gray-600 mb-4"></p>
-            <p id="modalDesc" class="text-sm text-gray-500 mb-4 whitespace-pre-wrap"></p>
+    <div id="eventModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+        <div class="relative mx-auto p-6 border shadow-xl rounded-lg bg-white max-w-md w-full m-4">
+            <div class="flex justify-between items-start mb-4">
+                <h3 id="modalTitle" class="text-xl font-bold text-gray-800"></h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
             
-            <div class="flex justify-end gap-2">
-                <button onclick="closeModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">Close</button>
-                <button id="addToCalBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add this Event</button>
+            <div class="space-y-3 mb-6">
+                <div class="flex items-center text-gray-600">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span id="modalTime"></span>
+                </div>
+                <div class="flex items-center text-gray-600">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span id="modalLocation"></span>
+                </div>
+                <div class="bg-gray-50 p-3 rounded text-sm text-gray-600 whitespace-pre-wrap max-h-40 overflow-y-auto" id="modalDesc"></div>
+            </div>
+            
+            <div class="flex justify-end pt-2">
+                <button id="addToCalBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded shadow transition w-full md:w-auto">
+                    Add to Calendar
+                </button>
             </div>
         </div>
     </div>
 
     <script>
         let calendar;
+        let allEvents = []; // Store all events globally for filtering
 
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
@@ -57,10 +96,29 @@
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-                slotMinTime: "06:00:00", // Start calendar at 6 AM
+                slotMinTime: "06:00:00",
                 slotMaxTime: "23:00:00",
                 height: 'auto',
                 nowIndicator: true,
+                allDaySlot: false,
+                
+                // CUSTOM CONTENT: Show Title AND Location in the calendar grid
+                eventContent: function(arg) {
+                    let title = arg.event.title;
+                    let location = arg.event.extendedProps.location || '';
+                    
+                    // Create a neat HTML structure for the event card
+                    let html = `
+                        <div class="fc-event-main-frame flex flex-col h-full">
+                            <div class="fc-event-title-container font-bold text-xs md:text-sm leading-tight sticky top-0 bg-inherit">
+                                ${title}
+                            </div>
+                            ${location ? `<div class="text-[10px] md:text-xs italic mt-1 opacity-90 truncate">📍 ${location}</div>` : ''}
+                        </div>
+                    `;
+                    return { html: html };
+                },
+
                 eventClick: function(info) {
                     showModal(info.event);
                 }
@@ -70,56 +128,129 @@
             fetchAndParseICS();
         });
 
-        // 1. Fetch the local ICS file (downloaded by GitHub Action)
+        // 1. Fetch
         async function fetchAndParseICS() {
             try {
-                // We fetch the local file 'gym.ics' which the GitHub Action creates
-                // If testing locally, ensure you have a dummy 'gym.ics' file
+                // Ensure 'gym.ics' exists in your repo (created by the GitHub Action)
                 const response = await fetch('./gym.ics');
                 if (!response.ok) throw new Error("Could not find gym.ics");
                 const icsData = await response.text();
-                
                 parseICS(icsData);
             } catch (error) {
                 console.error("Error loading ICS:", error);
-                // Fallback for local testing or if action hasn't run yet
-                alert("Schedule file not found. Wait for the GitHub Action to run once, or ensure 'gym.ics' is in the repo.");
+                alert("Could not load schedule. If this is a new repo, wait 5 minutes for the GitHub Action to run.");
             }
         }
 
-        // 2. Parse ICS data using ICAL.js
+        // 2. Parse & Populate Filters
         function parseICS(icsData) {
-            const jcalData = ICAL.parse(icsData);
-            const comp = new ICAL.Component(jcalData);
-            const events = comp.getAllSubcomponents('vevent');
+            try {
+                const jcalData = ICAL.parse(icsData);
+                const comp = new ICAL.Component(jcalData);
+                const events = comp.getAllSubcomponents('vevent');
 
-            const calendarEvents = events.map(event => {
-                const vevent = new ICAL.Event(event);
-                return {
-                    title: vevent.summary,
-                    start: vevent.startDate.toString(),
-                    end: vevent.endDate.toString(),
-                    description: vevent.description,
-                    location: vevent.location,
-                    // Store raw event for "Add to Calendar" generation
-                    extendedProps: {
-                        rawEvent: event
-                    }
-                };
-            });
+                // Clear global array
+                allEvents = [];
 
-            calendar.addEventSource(calendarEvents);
+                events.forEach(event => {
+                    const vevent = new ICAL.Event(event);
+                    
+                    // Determine Color based on title (Optional visual tweak)
+                    let color = '#3788d8'; // Default blue
+                    const summaryLower = vevent.summary.toLowerCase();
+                    if(summaryLower.includes('basketball')) color = '#f97316'; // Orange
+                    if(summaryLower.includes('yoga') || summaryLower.includes('pilates')) color = '#10b981'; // Emerald
+                    if(summaryLower.includes('swim')) color = '#0ea5e9'; // Sky Blue
+                    if(summaryLower.includes('zumba') || summaryLower.includes('dance')) color = '#ec4899'; // Pink
+
+                    allEvents.push({
+                        title: vevent.summary,
+                        start: vevent.startDate.toString(),
+                        end: vevent.endDate.toString(),
+                        description: vevent.description,
+                        location: vevent.location,
+                        color: color,
+                        extendedProps: {
+                            location: vevent.location,
+                            rawEvent: event
+                        }
+                    });
+                });
+
+                // Populate the dropdowns
+                populateDropdowns();
+                
+                // Initial Render
+                applyFilters();
+
+            } catch (e) {
+                console.error("Error parsing ICS data", e);
+            }
         }
 
-        // 3. Modal & "Add to Calendar" Logic
+        function populateDropdowns() {
+            const activitySet = new Set();
+            const locationSet = new Set();
+
+            allEvents.forEach(e => {
+                if (e.title) activitySet.add(e.title);
+                if (e.extendedProps.location) locationSet.add(e.extendedProps.location);
+            });
+
+            const actSelect = document.getElementById('activityFilter');
+            const locSelect = document.getElementById('locationFilter');
+
+            // Sort and add options
+            Array.from(activitySet).sort().forEach(act => {
+                let opt = document.createElement('option');
+                opt.value = act;
+                opt.innerText = act;
+                actSelect.appendChild(opt);
+            });
+
+            Array.from(locationSet).sort().forEach(loc => {
+                let opt = document.createElement('option');
+                opt.value = loc;
+                opt.innerText = loc;
+                locSelect.appendChild(opt);
+            });
+        }
+
+        // 3. Filtering Logic
+        function applyFilters() {
+            const selectedActivity = document.getElementById('activityFilter').value;
+            const selectedLocation = document.getElementById('locationFilter').value;
+
+            const filteredEvents = allEvents.filter(e => {
+                const matchActivity = (selectedActivity === 'all') || (e.title === selectedActivity);
+                const matchLocation = (selectedLocation === 'all') || (e.extendedProps.location === selectedLocation);
+                return matchActivity && matchLocation;
+            });
+
+            calendar.removeAllEvents();
+            calendar.addEventSource(filteredEvents);
+        }
+
+        function resetFilters() {
+            document.getElementById('activityFilter').value = 'all';
+            document.getElementById('locationFilter').value = 'all';
+            applyFilters();
+        }
+
+        // 4. Modal Logic
         function showModal(event) {
             document.getElementById('modalTitle').innerText = event.title;
-            document.getElementById('modalTime').innerText = 
-                event.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' - ' +
-                event.end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            document.getElementById('modalDesc').innerText = event.extendedProps.description || "No description";
+            document.getElementById('modalLocation').innerText = event.extendedProps.location || "No location info";
             
-            // Setup Single Event Download
+            const start = event.start;
+            const end = event.end;
+            const dateStr = start.toLocaleDateString([], {weekday: 'short', month: 'short', day: 'numeric'});
+            const timeStr = start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' - ' + end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            document.getElementById('modalTime').innerText = `${dateStr} • ${timeStr}`;
+            document.getElementById('modalDesc').innerText = event.extendedProps.description || "No description available.";
+            
+            // "Add to Calendar" button logic
             const btn = document.getElementById('addToCalBtn');
             btn.onclick = () => downloadSingleEvent(event);
 
@@ -130,9 +261,15 @@
             document.getElementById('eventModal').classList.add('hidden');
         }
 
-        // Generate a mini .ics file for a single event
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('eventModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
         function downloadSingleEvent(calEvent) {
-            // We reconstruct a simple ICS for this specific event
             const start = calEvent.start.toISOString().replace(/-|:|\.\d+/g, "");
             const end = calEvent.end.toISOString().replace(/-|:|\.\d+/g, "");
             
@@ -152,7 +289,7 @@
             const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', `${calEvent.title}.ics`);
+            link.setAttribute('download', `${calEvent.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ics`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
