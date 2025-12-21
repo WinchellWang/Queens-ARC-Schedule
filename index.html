@@ -14,8 +14,11 @@
         .fc-event { cursor: pointer; border: none; }
         
         /* FIX: Ensure List View text is always visible and dark */
-        .fc-list-event-title { color: #1f2937 !important; } /* text-gray-800 */
-        .fc-list-day-cushion { background-color: #f3f4f6 !important; } /* bg-gray-100 */
+        .fc-list-event-title { color: #1f2937 !important; } 
+        .fc-list-day-cushion { background-color: #f3f4f6 !important; }
+        
+        /* Links in description should look like links */
+        #modalDesc a { color: #2563eb; text-decoration: underline; }
         
         /* Mobile Toolbar Fixes */
         @media (max-width: 640px) {
@@ -48,13 +51,11 @@
                         <option value="all">Activity (All)</option>
                     </select>
                 </div>
-
                 <div class="relative col-span-1">
                     <select id="locationFilter" onchange="applyFilters()" class="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded text-sm leading-tight focus:outline-none focus:border-blue-500">
                         <option value="all">Location (All)</option>
                     </select>
                 </div>
-
                 <button onclick="resetFilters()" class="col-span-2 md:col-span-1 bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-2 px-4 rounded text-sm transition">
                     Reset
                 </button>
@@ -90,13 +91,13 @@
                         <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wide">Time</p>
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wide">Time (Kingston/Eastern)</p>
                         <p id="modalTime" class="text-gray-800 font-medium text-sm"></p>
                     </div>
                 </div>
             </div>
 
-            <div id="modalDesc" class="text-sm text-gray-600 mb-6 bg-gray-50 p-3 rounded-lg max-h-32 overflow-y-auto hidden"></div>
+            <div id="modalDesc" class="text-sm text-gray-600 mb-6 bg-gray-50 p-3 rounded-lg max-h-32 overflow-y-auto hidden break-words"></div>
 
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="closeModal()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl transition">Close</button>
@@ -117,10 +118,9 @@
             const calendarEl = document.getElementById('calendar');
             
             calendar = new FullCalendar.Calendar(calendarEl, {
-                // Force List View on Mobile
                 initialView: isMobile ? 'listWeek' : 'timeGridWeek',
                 headerToolbar: {
-                    left: 'prev,next', // Simplified for mobile
+                    left: 'prev,next',
                     center: 'title',
                     right: isMobile ? 'listWeek,timeGridDay' : 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
@@ -129,15 +129,13 @@
                 height: 'auto',
                 nowIndicator: true,
                 allDaySlot: false,
-                navLinks: false, // Disable jumping to day view on click to prevent confusion
+                navLinks: false,
                 
-                // FIX FOR ISSUE 1: Explicitly Render Content for BOTH List and Grid views
                 eventContent: function(arg) {
                     let title = arg.event.title;
                     let location = arg.event.extendedProps.location || '';
                     
-                    // A. LIST VIEW RENDERING (The fix for invisible text)
-                    if (arg.view.type === 'listWeek' || arg.view.type === 'listDay' || arg.view.type === 'listMonth') {
+                    if (arg.view.type.startsWith('list')) {
                         let html = `
                             <div class="flex flex-col w-full py-1">
                                 <div class="font-bold text-gray-900 text-sm">${title}</div>
@@ -147,7 +145,6 @@
                         return { html: html };
                     }
                     
-                    // B. GRID VIEW RENDERING
                     let html = `
                         <div class="fc-event-main-frame flex flex-col h-full overflow-hidden p-0.5">
                             <div class="fc-event-title-container font-bold text-xs leading-tight sticky top-0">
@@ -177,7 +174,6 @@
                 parseICS(icsData);
             } catch (error) {
                 console.error("Error:", error);
-                // alert("Still loading schedule... check back in a few minutes.");
             }
         }
 
@@ -208,7 +204,10 @@
                         color: color,
                         extendedProps: {
                             location: vevent.location,
-                            rawEvent: event
+                            // Store the RAW ICAL TIME to preserve source timezone info
+                            icalStart: vevent.startDate,
+                            icalEnd: vevent.endDate,
+                            description: vevent.description
                         }
                     });
                 });
@@ -222,7 +221,6 @@
         function populateDropdowns() {
             const activitySet = new Set();
             const locationSet = new Set();
-
             allEvents.forEach(e => {
                 if (e.title) activitySet.add(e.title);
                 if (e.extendedProps.location) locationSet.add(e.extendedProps.location);
@@ -238,7 +236,6 @@
                 let opt = document.createElement('option');
                 opt.value = act; opt.innerText = act; actSelect.appendChild(opt);
             });
-
             Array.from(locationSet).sort().forEach(loc => {
                 let opt = document.createElement('option');
                 opt.value = loc; opt.innerText = loc; locSelect.appendChild(opt);
@@ -248,13 +245,11 @@
         function applyFilters() {
             const selectedActivity = document.getElementById('activityFilter').value;
             const selectedLocation = document.getElementById('locationFilter').value;
-
             const filteredEvents = allEvents.filter(e => {
                 const matchActivity = (selectedActivity === 'all') || (e.title === selectedActivity);
                 const matchLocation = (selectedLocation === 'all') || (e.extendedProps.location === selectedLocation);
                 return matchActivity && matchLocation;
             });
-
             calendar.removeAllEvents();
             calendar.addEventSource(filteredEvents);
         }
@@ -280,7 +275,8 @@
             const desc = event.extendedProps.description;
             const descEl = document.getElementById('modalDesc');
             if (desc) {
-                descEl.innerText = desc;
+                // CHANGED: Use innerHTML to render the HTML properly
+                descEl.innerHTML = desc;
                 descEl.classList.remove('hidden');
             } else {
                 descEl.classList.add('hidden');
@@ -298,25 +294,48 @@
             document.getElementById('eventModal').classList.add('hidden');
         }
 
-        // FIX FOR ISSUE 2: Helper function to escape text for ICS format
         function escapeICS(str) {
             if (!str) return "";
-            return str.replace(/\\/g, "\\\\") // Escape backslashes
-                      .replace(/;/g, "\\;")   // Escape semicolons
-                      .replace(/,/g, "\\,")   // Escape commas
-                      .replace(/\n/g, "\\n"); // Escape newlines
+            return str.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+        }
+
+        // Helper to strip HTML tags for the calendar export
+        function cleanDescription(html) {
+            if (!html) return "";
+            // 1. Replace <br> with newlines
+            let clean = html.replace(/<br\s*\/?>/gi, '\n');
+            // 2. Strip all other HTML tags
+            let tmp = document.createElement("DIV");
+            tmp.innerHTML = clean;
+            return tmp.textContent || tmp.innerText || "";
+        }
+
+        // Helper to format ICAL.Time object to ICS string (YYYYMMDDTHHMMSS)
+        function formatIcalTime(icalTime) {
+            const pad = (n) => n < 10 ? '0' + n : n;
+            return icalTime.year + 
+                   pad(icalTime.month) + 
+                   pad(icalTime.day) + 'T' + 
+                   pad(icalTime.hour) + 
+                   pad(icalTime.minute) + 
+                   pad(icalTime.second);
         }
 
         function downloadSingleEvent(calEvent) {
-            const start = calEvent.start.toISOString().replace(/-|:|\.\d+/g, "");
-            const end = calEvent.end.toISOString().replace(/-|:|\.\d+/g, "");
+            // We use the raw ICAL time objects we stored earlier
+            // This preserves the exact source time components
+            const startStr = formatIcalTime(calEvent.extendedProps.icalStart);
+            const endStr = formatIcalTime(calEvent.extendedProps.icalEnd);
+            
             const now = new Date().toISOString().replace(/-|:|\.\d+/g, "");
             
             const title = escapeICS(calEvent.title);
-            const description = escapeICS(calEvent.extendedProps.description || "");
+            // CLEAN description (strip HTML) before adding to ICS
+            const rawDesc = calEvent.extendedProps.description || "";
+            const description = escapeICS(cleanDescription(rawDesc));
             const location = escapeICS(calEvent.extendedProps.location || "");
 
-            // Build ICS file content
+            // TZID included!
             const icsContent = [
                 "BEGIN:VCALENDAR",
                 "VERSION:2.0",
@@ -324,8 +343,8 @@
                 "BEGIN:VEVENT",
                 `UID:${now}-${Math.floor(Math.random() * 100000)}@gymschedule`,
                 `DTSTAMP:${now}`,
-                `DTSTART:${start}`,
-                `DTEND:${end}`,
+                `DTSTART;TZID=America/Toronto:${startStr}`,
+                `DTEND;TZID=America/Toronto:${endStr}`,
                 `SUMMARY:${title}`,
                 `DESCRIPTION:${description}`,
                 `LOCATION:${location}`, 
