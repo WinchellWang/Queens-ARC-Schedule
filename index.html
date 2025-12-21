@@ -44,12 +44,12 @@
         <div class="bg-gray-50 p-3 border-b border-gray-100">
             <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
                 <div class="relative col-span-1">
-                    <select id="activityFilter" onchange="applyFilters()" class="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded text-sm leading-tight focus:outline-none focus:border-blue-500">
+                    <select id="activityFilter" onchange="applyFilters(true)" class="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded text-sm leading-tight focus:outline-none focus:border-blue-500">
                         <option value="all">Activity (All)</option>
                     </select>
                 </div>
                 <div class="relative col-span-1">
-                    <select id="locationFilter" onchange="applyFilters()" class="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded text-sm leading-tight focus:outline-none focus:border-blue-500">
+                    <select id="locationFilter" onchange="applyFilters(true)" class="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded text-sm leading-tight focus:outline-none focus:border-blue-500">
                         <option value="all">Location (All)</option>
                     </select>
                 </div>
@@ -132,7 +132,6 @@
                     let title = arg.event.title;
                     let location = arg.event.extendedProps.location || '';
                     
-                    // List View Render
                     if (arg.view.type.startsWith('list')) {
                         let html = `
                             <div class="flex flex-col w-full py-1">
@@ -143,7 +142,6 @@
                         return { html: html };
                     }
                     
-                    // Grid View Render
                     let html = `
                         <div class="fc-event-main-frame flex flex-col h-full overflow-hidden p-0.5">
                             <div class="fc-event-title-container font-bold text-xs leading-tight sticky top-0">
@@ -184,18 +182,12 @@
                 allEvents = [];
 
                 events.forEach(event => {
-                    const vevent = new ICAL.Event(event);
-                    
-                    // 1. FILTER: REMOVE CANCELLED EVENTS
                     const status = event.getFirstPropertyValue('status');
-                    if (status && status.toUpperCase() === 'CANCELLED') {
-                        return; 
-                    }
+                    if (status && status.toUpperCase() === 'CANCELLED') { return; }
+                    
+                    const vevent = new ICAL.Event(event);
 
-                    // 2. FILTER: REMOVE EVENTS WITHOUT LOCATION
-                    if (!vevent.location || vevent.location.trim() === "") {
-                        return;
-                    }
+                    if (!vevent.location || vevent.location.trim() === "") { return; }
 
                     let color = '#3b82f6';
                     const summaryLower = vevent.summary.toLowerCase();
@@ -223,7 +215,8 @@
                 });
 
                 populateDropdowns();
-                applyFilters();
+                // Apply filters (checking localStorage)
+                applyFilters(false);
 
             } catch (e) { console.error(e); }
         }
@@ -242,19 +235,38 @@
             actSelect.innerHTML = '<option value="all">Activity (All)</option>';
             locSelect.innerHTML = '<option value="all">Location (All)</option>';
 
+            // FEATURE 2: CACHING
+            // Load saved settings
+            const savedAct = localStorage.getItem('gym_activity');
+            const savedLoc = localStorage.getItem('gym_location');
+
             Array.from(activitySet).sort().forEach(act => {
                 let opt = document.createElement('option');
-                opt.value = act; opt.innerText = act; actSelect.appendChild(opt);
+                opt.value = act; opt.innerText = act; 
+                if (savedAct === act) opt.selected = true; // Select if matches saved
+                actSelect.appendChild(opt);
             });
             Array.from(locationSet).sort().forEach(loc => {
                 let opt = document.createElement('option');
-                opt.value = loc; opt.innerText = loc; locSelect.appendChild(opt);
+                opt.value = loc; opt.innerText = loc; 
+                if (savedLoc === loc) opt.selected = true; // Select if matches saved
+                locSelect.appendChild(opt);
             });
         }
 
-        function applyFilters() {
-            const selectedActivity = document.getElementById('activityFilter').value;
-            const selectedLocation = document.getElementById('locationFilter').value;
+        function applyFilters(saveToCache = false) {
+            const actSelect = document.getElementById('activityFilter');
+            const locSelect = document.getElementById('locationFilter');
+            
+            const selectedActivity = actSelect.value;
+            const selectedLocation = locSelect.value;
+
+            // Save to LocalStorage if user changed it manually
+            if (saveToCache) {
+                localStorage.setItem('gym_activity', selectedActivity);
+                localStorage.setItem('gym_location', selectedLocation);
+            }
+
             const filteredEvents = allEvents.filter(e => {
                 const matchActivity = (selectedActivity === 'all') || (e.title === selectedActivity);
                 const matchLocation = (selectedLocation === 'all') || (e.extendedProps.location === selectedLocation);
@@ -267,7 +279,12 @@
         function resetFilters() {
             document.getElementById('activityFilter').value = 'all';
             document.getElementById('locationFilter').value = 'all';
-            applyFilters();
+            
+            // Clear cache
+            localStorage.removeItem('gym_activity');
+            localStorage.removeItem('gym_location');
+            
+            applyFilters(true);
         }
 
         function showModal(event) {
@@ -328,21 +345,18 @@
                    pad(icalTime.second);
         }
 
-        function downloadSingleEvent(calEvent) {
+        // FIX FOR IPHONE: Use Web Share API if available
+        async function downloadSingleEvent(calEvent) {
             const startStr = formatIcalTime(calEvent.extendedProps.icalStart);
             const endStr = formatIcalTime(calEvent.extendedProps.icalEnd);
-            
-            // STRICT ISO-8601 UTC timestamp for DTSTAMP (required by spec)
-            const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, ""); // Format: YYYYMMDDTHHMMSSZ
+            const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, ""); 
             
             const title = escapeICS(calEvent.title);
-            const rawDesc = calEvent.extendedProps.description || "";
-            const plainDesc = cleanDescription(rawDesc);
+            const plainDesc = cleanDescription(calEvent.extendedProps.description || "");
             const description = escapeICS(plainDesc);
             const location = escapeICS(calEvent.extendedProps.location || "");
-
-            // VTIMEZONE Block allows calendars to understand "America/Toronto"
-            // Without this, strict parsers reject files containing TZID
+            
+            // Standard VTIMEZONE for broad compatibility
             const vTimezone = 
 `BEGIN:VTIMEZONE
 TZID:America/Toronto
@@ -366,6 +380,7 @@ END:VTIMEZONE`;
                 "BEGIN:VCALENDAR",
                 "VERSION:2.0",
                 "PRODID:-//Gym Schedule//EN",
+                "METHOD:PUBLISH",
                 vTimezone,
                 "BEGIN:VEVENT",
                 `UID:${now}-${Math.floor(Math.random() * 100000)}@gymschedule`,
@@ -379,6 +394,25 @@ END:VTIMEZONE`;
                 "END:VCALENDAR"
             ].join("\r\n");
 
+            // --- IOS FIX START ---
+            // If the browser supports native sharing (iOS/Android), use that.
+            // This bypasses the "Download to Files" issue.
+            if (navigator.share) {
+                const file = new File([icsContent], `${calEvent.title}.ics`, { type: 'text/calendar' });
+                try {
+                    await navigator.share({
+                        files: [file],
+                        title: calEvent.title,
+                        text: 'Add to Calendar'
+                    });
+                    return; // Stop if share was successful
+                } catch (err) {
+                    console.log("Share failed or cancelled, falling back to download", err);
+                }
+            }
+            // --- IOS FIX END ---
+
+            // Fallback for Desktop / non-sharing browsers
             const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
