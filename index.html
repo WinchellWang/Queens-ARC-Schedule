@@ -36,6 +36,24 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
         .fc-event { cursor: pointer; border: none; }
         
+        /* --- MOBILE OPTIMIZATIONS --- */
+        @media (max-width: 768px) {
+            /* Fix: Shrink Date Title on Mobile so it doesn't break layout */
+            .fc-toolbar-title { 
+                font-size: 1.1rem !important; 
+                font-weight: 700 !important;
+            }
+            /* Adjust buttons to fit next to the smaller title */
+            .fc .fc-button { 
+                padding: 0.3em 0.5em !important; 
+                font-size: 0.85em !important; 
+            }
+            .fc-toolbar-chunk {
+                display: flex;
+                align-items: center;
+            }
+        }
+
         /* --- DARK MODE FIXES --- */
         @media (prefers-color-scheme: dark) {
             .fc-theme-standard th { 
@@ -243,13 +261,16 @@
                     const vevent = new ICAL.Event(event);
                     if (!vevent.location || vevent.location.trim() === "") { return; }
 
-                    let color = '#3b82f6';
+                    // --- NEW VIBRANT COLOR PALETTE ---
+                    // Default to Bright Orange/Red for high visibility
+                    let color = '#ea580c'; // Default: Tailwind Orange-600
                     const summaryLower = vevent.summary.toLowerCase();
-                    if(summaryLower.includes('basketball')) color = '#f97316'; 
-                    if(summaryLower.includes('yoga') || summaryLower.includes('pilates')) color = '#10b981';
-                    if(summaryLower.includes('swim') || summaryLower.includes('pool')) color = '#0ea5e9';
-                    if(summaryLower.includes('zumba') || summaryLower.includes('dance')) color = '#ec4899';
-                    if(summaryLower.includes('barre')) color = '#8b5cf6';
+                    
+                    if(summaryLower.includes('basketball')) color = '#f59e0b'; // Amber-500 (Bright Orange/Yellow)
+                    if(summaryLower.includes('yoga') || summaryLower.includes('pilates')) color = '#16a34a'; // Green-600
+                    if(summaryLower.includes('swim') || summaryLower.includes('pool')) color = '#0284c7'; // Sky-600
+                    if(summaryLower.includes('zumba') || summaryLower.includes('dance')) color = '#db2777'; // Pink-600
+                    if(summaryLower.includes('barre')) color = '#9333ea'; // Purple-600
 
                     allEvents.push({
                         title: vevent.summary,
@@ -331,10 +352,8 @@
             applyFilters(true);
         }
 
-        // --- SAFE DESCRIPTION CLEANER (DOMParser) ---
         function cleanDescription(html) {
             if (!html) return "";
-            // Replace <br> with newlines first
             const txt = html.replace(/<br\s*\/?>/gi, '\n');
             const doc = new DOMParser().parseFromString(txt, 'text/html');
             return doc.body.textContent || "";
@@ -348,15 +367,13 @@
                       .replace(/\n/g, "\\n");
         }
 
-        // --- FIX FOR CALENDAR FILE GENERATION ---
         function downloadSingleEvent(calEvent) {
             const start = calEvent.extendedProps.icalStart;
             const end = calEvent.extendedProps.icalEnd;
             const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
 
-            // BUG FIX: Strictly ensure we are returning STRINGS, not numbers.
-            // Previously, pad(10) returned a number, causing 2025 + 10 = 2035.
-            const pad = n => n < 10 ? '0'+n : ''+n; 
+            // FIX: Ensure we pad with STRINGS to avoid math addition errors
+            const pad = n => n < 10 ? '0' + n : '' + n;
 
             const formatIcal = (t) => {
                 return t.year + pad(t.month) + pad(t.day) + 'T' + pad(t.hour) + pad(t.minute) + pad(t.second);
@@ -367,7 +384,6 @@
             const rawDesc = calEvent.extendedProps.description || "";
             const description = escapeICS(cleanDescription(rawDesc));
 
-            // Standard ICS content
             const icsContent = 
 `BEGIN:VCALENDAR
 VERSION:2.0
@@ -400,7 +416,6 @@ LOCATION:${location}
 END:VEVENT
 END:VCALENDAR`;
 
-            // Standard Blob Download (This method works on iOS if the file is valid)
             const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
@@ -411,6 +426,9 @@ END:VCALENDAR`;
         }
 
         function showModal(event) {
+            // FIX: Lock background scrolling
+            document.body.classList.add('overflow-hidden');
+
             document.getElementById('modalTitle').innerText = event.title;
             const loc = event.extendedProps.location || "No location info";
             document.getElementById('locText').innerText = loc;
@@ -440,6 +458,8 @@ END:VCALENDAR`;
         }
 
         function closeModal() {
+            // FIX: Unlock background scrolling
+            document.body.classList.remove('overflow-hidden');
             document.getElementById('eventModal').classList.add('hidden');
         }
     </script>
