@@ -132,6 +132,7 @@
                     let title = arg.event.title;
                     let location = arg.event.extendedProps.location || '';
                     
+                    // List View Render
                     if (arg.view.type.startsWith('list')) {
                         let html = `
                             <div class="flex flex-col w-full py-1">
@@ -142,6 +143,7 @@
                         return { html: html };
                     }
                     
+                    // Grid View Render
                     let html = `
                         <div class="fc-event-main-frame flex flex-col h-full overflow-hidden p-0.5">
                             <div class="fc-event-title-container font-bold text-xs leading-tight sticky top-0">
@@ -182,13 +184,19 @@
                 allEvents = [];
 
                 events.forEach(event => {
-                    // 1. FILTER: Check for CANCELLED status immediately
+                    const vevent = new ICAL.Event(event);
+                    
+                    // 1. FILTER: REMOVE CANCELLED EVENTS
                     const status = event.getFirstPropertyValue('status');
                     if (status && status.toUpperCase() === 'CANCELLED') {
-                        return; // Skip this event entirely
+                        return; 
                     }
 
-                    const vevent = new ICAL.Event(event);
+                    // 2. FILTER: REMOVE EVENTS WITHOUT LOCATION
+                    if (!vevent.location || vevent.location.trim() === "") {
+                        return;
+                    }
+
                     let color = '#3b82f6';
                     const summaryLower = vevent.summary.toLowerCase();
                     
@@ -277,7 +285,6 @@
             const desc = event.extendedProps.description;
             const descEl = document.getElementById('modalDesc');
             if (desc) {
-                // Keep HTML for the modal popup so links work
                 descEl.innerHTML = desc;
                 descEl.classList.remove('hidden');
             } else {
@@ -296,18 +303,13 @@
             document.getElementById('eventModal').classList.add('hidden');
         }
 
-        // Helper: Strip HTML tags and decode entities for plain text export
         function cleanDescription(html) {
             if (!html) return "";
-            // Create a temporary element to let the browser decode HTML entities (like &amp;)
             let tempDiv = document.createElement("div");
-            // Replace <br> with newlines first
             tempDiv.innerHTML = html.replace(/<br\s*\/?>/gi, '\n');
-            // Get the plain text (this strips tags and decodes entities)
             return tempDiv.textContent || tempDiv.innerText || "";
         }
 
-        // Helper: Escape characters strict adherence to RFC 5545
         function escapeICS(str) {
             if (!str) return "";
             return str.replace(/\\/g, "\\\\")
@@ -329,23 +331,42 @@
         function downloadSingleEvent(calEvent) {
             const startStr = formatIcalTime(calEvent.extendedProps.icalStart);
             const endStr = formatIcalTime(calEvent.extendedProps.icalEnd);
-            const now = new Date().toISOString().replace(/-|:|\.\d+/g, "");
             
-            // 1. Title
+            // STRICT ISO-8601 UTC timestamp for DTSTAMP (required by spec)
+            const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, ""); // Format: YYYYMMDDTHHMMSSZ
+            
             const title = escapeICS(calEvent.title);
-            
-            // 2. Description: Clean HTML -> Plain Text -> Escape for ICS
             const rawDesc = calEvent.extendedProps.description || "";
             const plainDesc = cleanDescription(rawDesc);
             const description = escapeICS(plainDesc);
-            
-            // 3. Location
             const location = escapeICS(calEvent.extendedProps.location || "");
+
+            // VTIMEZONE Block allows calendars to understand "America/Toronto"
+            // Without this, strict parsers reject files containing TZID
+            const vTimezone = 
+`BEGIN:VTIMEZONE
+TZID:America/Toronto
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0400
+TZNAME:EDT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:-0400
+TZOFFSETTO:-0500
+TZNAME:EST
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE`;
 
             const icsContent = [
                 "BEGIN:VCALENDAR",
                 "VERSION:2.0",
                 "PRODID:-//Gym Schedule//EN",
+                vTimezone,
                 "BEGIN:VEVENT",
                 `UID:${now}-${Math.floor(Math.random() * 100000)}@gymschedule`,
                 `DTSTAMP:${now}`,
