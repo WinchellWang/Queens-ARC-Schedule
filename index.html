@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gym Schedule</title>
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
@@ -10,116 +10,137 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
         .fc-event { cursor: pointer; border: none; }
-        /* Make events look a bit cleaner */
-        .fc-timegrid-event .fc-event-main { padding: 4px; }
+        /* Mobile adjustments for calendar toolbar */
+        @media (max-width: 640px) {
+            .fc-toolbar { flex-direction: column; gap: 10px; }
+            .fc-toolbar-title { font-size: 1.25rem !important; }
+        }
     </style>
 </head>
-<body class="bg-gray-100 p-4">
+<body class="bg-gray-100 p-2 md:p-6 text-gray-800">
 
-    <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 border-b pb-4">
-            <h1 class="text-3xl font-bold text-gray-800">Gym Schedule</h1>
+    <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        
+        <div class="p-4 md:p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800 text-center md:text-left">Gym Schedule</h1>
+                <p class="text-xs md:text-sm text-gray-500 text-center md:text-left mt-1">Tap an event to see details & add to calendar</p>
+            </div>
             
-            <div class="flex gap-2 mt-4 md:mt-0">
-                <a href="webcal://ifgical.api.pgaskin.net/110.ics" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/></svg>
-                    Sync to Phone
-                </a>
+            <a href="webcal://ifgical.api.pgaskin.net/110.ics" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow transition flex justify-center items-center text-sm md:text-base">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/></svg>
+                Sync All to Phone
+            </a>
+        </div>
+
+        <div class="bg-gray-50 p-4 border-b border-gray-100">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Activity</label>
+                    <div class="relative">
+                        <select id="activityFilter" onchange="applyFilters()" class="block w-full bg-white border border-gray-200 text-gray-700 py-3 px-4 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500 appearance-none">
+                            <option value="all">All Activities</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Location</label>
+                    <div class="relative">
+                        <select id="locationFilter" onchange="applyFilters()" class="block w-full bg-white border border-gray-200 text-gray-700 py-3 px-4 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500 appearance-none">
+                            <option value="all">All Locations</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-end">
+                    <button onclick="resetFilters()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition">
+                        Reset
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-gray-50 p-4 rounded-lg">
-            <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2">Activity Type</label>
-                <select id="activityFilter" onchange="applyFilters()" class="w-full p-2 border rounded shadow-sm focus:ring-2 focus:ring-blue-500">
-                    <option value="all">All Activities</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2">Location</label>
-                <select id="locationFilter" onchange="applyFilters()" class="w-full p-2 border rounded shadow-sm focus:ring-2 focus:ring-blue-500">
-                    <option value="all">All Locations</option>
-                </select>
-            </div>
-            <div class="flex items-end">
-                <button onclick="resetFilters()" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded transition">
-                    Reset Filters
-                </button>
-            </div>
+        <div class="p-2 md:p-6">
+            <div id='calendar'></div>
         </div>
-
-        <div id='calendar'></div>
     </div>
 
-    <div id="eventModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50 flex items-center justify-center">
-        <div class="relative mx-auto p-6 border shadow-xl rounded-lg bg-white max-w-md w-full m-4">
-            <div class="flex justify-between items-start mb-4">
-                <h3 id="modalTitle" class="text-xl font-bold text-gray-800"></h3>
-                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            
-            <div class="space-y-3 mb-6">
-                <div class="flex items-center text-gray-600">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <div id="eventModal" class="fixed inset-0 z-50 flex items-end md:items-center justify-center pointer-events-none hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-60 pointer-events-auto transition-opacity" onclick="closeModal()"></div>
+        
+        <div class="bg-white w-full md:w-96 md:rounded-xl rounded-t-xl p-6 pointer-events-auto transform transition-transform duration-300 ease-out shadow-2xl pb-10 md:pb-6">
+            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 md:hidden"></div> <h3 id="modalTitle" class="text-xl font-bold text-gray-900 mb-1 leading-tight"></h3>
+            <p id="modalLocation" class="text-sm font-medium text-blue-600 mb-4 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span id="locText"></span>
+            </p>
+
+            <div class="bg-gray-50 rounded-lg p-3 mb-5 border border-gray-100">
+                <div class="flex items-center text-gray-700 font-medium mb-1">
+                    <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span id="modalTime"></span>
                 </div>
-                <div class="flex items-center text-gray-600">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <span id="modalLocation"></span>
-                </div>
-                <div class="bg-gray-50 p-3 rounded text-sm text-gray-600 whitespace-pre-wrap max-h-40 overflow-y-auto" id="modalDesc"></div>
+                <div id="modalDesc" class="text-sm text-gray-500 mt-2 pl-6 whitespace-pre-wrap max-h-32 overflow-y-auto"></div>
             </div>
-            
-            <div class="flex justify-end pt-2">
-                <button id="addToCalBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded shadow transition w-full md:w-auto">
-                    Add to Calendar
-                </button>
+
+            <div class="flex gap-3">
+                <button onclick="closeModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-lg">Close</button>
+                <button id="addToCalBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow">Add to Calendar</button>
             </div>
         </div>
     </div>
 
     <script>
         let calendar;
-        let allEvents = []; // Store all events globally for filtering
+        let allEvents = [];
+        const isMobile = window.innerWidth < 768;
 
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
             
             calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek',
+                // MOBILE OPTIMIZATION: Use List View on mobile, Week view on Desktop
+                initialView: isMobile ? 'listWeek' : 'timeGridWeek',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    right: isMobile ? 'listWeek,timeGridDay' : 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
                 slotMinTime: "06:00:00",
                 slotMaxTime: "23:00:00",
                 height: 'auto',
                 nowIndicator: true,
                 allDaySlot: false,
+                navLinks: true, // Allow clicking day names
                 
-                // CUSTOM CONTENT: Show Title AND Location in the calendar grid
+                // Custom event card content
                 eventContent: function(arg) {
+                    if (arg.view.type === 'listWeek') return; // Default list view style is fine
+                    
                     let title = arg.event.title;
                     let location = arg.event.extendedProps.location || '';
-                    
-                    // Create a neat HTML structure for the event card
                     let html = `
-                        <div class="fc-event-main-frame flex flex-col h-full">
-                            <div class="fc-event-title-container font-bold text-xs md:text-sm leading-tight sticky top-0 bg-inherit">
+                        <div class="fc-event-main-frame flex flex-col h-full overflow-hidden">
+                            <div class="fc-event-title-container font-bold text-xs leading-tight sticky top-0">
                                 ${title}
                             </div>
-                            ${location ? `<div class="text-[10px] md:text-xs italic mt-1 opacity-90 truncate">📍 ${location}</div>` : ''}
+                            ${location ? `<div class="text-[10px] italic mt-0.5 opacity-90 truncate">📍${location}</div>` : ''}
                         </div>
                     `;
                     return { html: html };
                 },
 
                 eventClick: function(info) {
+                    info.jsEvent.preventDefault(); // Prevent default browser navigation
                     showModal(info.event);
                 }
             });
@@ -128,64 +149,56 @@
             fetchAndParseICS();
         });
 
-        // 1. Fetch
         async function fetchAndParseICS() {
             try {
-                // Ensure 'gym.ics' exists in your repo (created by the GitHub Action)
+                // Fetch the downloaded file from the repo
                 const response = await fetch('./gym.ics');
-                if (!response.ok) throw new Error("Could not find gym.ics");
+                if (!response.ok) throw new Error("File not found");
                 const icsData = await response.text();
                 parseICS(icsData);
             } catch (error) {
-                console.error("Error loading ICS:", error);
-                alert("Could not load schedule. If this is a new repo, wait 5 minutes for the GitHub Action to run.");
+                console.error("Error:", error);
+                alert("Schedule loading... (If this persists, the GitHub Action needs to run)");
             }
         }
 
-        // 2. Parse & Populate Filters
         function parseICS(icsData) {
             try {
                 const jcalData = ICAL.parse(icsData);
                 const comp = new ICAL.Component(jcalData);
                 const events = comp.getAllSubcomponents('vevent');
-
-                // Clear global array
                 allEvents = [];
 
                 events.forEach(event => {
                     const vevent = new ICAL.Event(event);
-                    
-                    // Determine Color based on title (Optional visual tweak)
-                    let color = '#3788d8'; // Default blue
+                    let color = '#3b82f6'; // Default blue-500
                     const summaryLower = vevent.summary.toLowerCase();
+                    
+                    // Color Coding
                     if(summaryLower.includes('basketball')) color = '#f97316'; // Orange
                     if(summaryLower.includes('yoga') || summaryLower.includes('pilates')) color = '#10b981'; // Emerald
-                    if(summaryLower.includes('swim')) color = '#0ea5e9'; // Sky Blue
+                    if(summaryLower.includes('swim') || summaryLower.includes('pool')) color = '#0ea5e9'; // Sky
                     if(summaryLower.includes('zumba') || summaryLower.includes('dance')) color = '#ec4899'; // Pink
+                    if(summaryLower.includes('barre')) color = '#8b5cf6'; // Violet
 
                     allEvents.push({
                         title: vevent.summary,
                         start: vevent.startDate.toString(),
                         end: vevent.endDate.toString(),
                         description: vevent.description,
-                        location: vevent.location,
+                        location: vevent.location, // Store location here
                         color: color,
                         extendedProps: {
-                            location: vevent.location,
+                            location: vevent.location, // And here for props
                             rawEvent: event
                         }
                     });
                 });
 
-                // Populate the dropdowns
                 populateDropdowns();
-                
-                // Initial Render
                 applyFilters();
 
-            } catch (e) {
-                console.error("Error parsing ICS data", e);
-            }
+            } catch (e) { console.error(e); }
         }
 
         function populateDropdowns() {
@@ -200,23 +213,21 @@
             const actSelect = document.getElementById('activityFilter');
             const locSelect = document.getElementById('locationFilter');
 
-            // Sort and add options
+            // Clear previous options except "All"
+            actSelect.innerHTML = '<option value="all">All Activities</option>';
+            locSelect.innerHTML = '<option value="all">All Locations</option>';
+
             Array.from(activitySet).sort().forEach(act => {
                 let opt = document.createElement('option');
-                opt.value = act;
-                opt.innerText = act;
-                actSelect.appendChild(opt);
+                opt.value = act; opt.innerText = act; actSelect.appendChild(opt);
             });
 
             Array.from(locationSet).sort().forEach(loc => {
                 let opt = document.createElement('option');
-                opt.value = loc;
-                opt.innerText = loc;
-                locSelect.appendChild(opt);
+                opt.value = loc; opt.innerText = loc; locSelect.appendChild(opt);
             });
         }
 
-        // 3. Filtering Logic
         function applyFilters() {
             const selectedActivity = document.getElementById('activityFilter').value;
             const selectedLocation = document.getElementById('locationFilter').value;
@@ -237,10 +248,10 @@
             applyFilters();
         }
 
-        // 4. Modal Logic
         function showModal(event) {
             document.getElementById('modalTitle').innerText = event.title;
-            document.getElementById('modalLocation').innerText = event.extendedProps.location || "No location info";
+            const loc = event.extendedProps.location || "No location info";
+            document.getElementById('locText').innerText = loc;
             
             const start = event.start;
             const end = event.end;
@@ -248,11 +259,13 @@
             const timeStr = start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' - ' + end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             
             document.getElementById('modalTime').innerText = `${dateStr} • ${timeStr}`;
-            document.getElementById('modalDesc').innerText = event.extendedProps.description || "No description available.";
+            document.getElementById('modalDesc').innerText = event.extendedProps.description || "No description.";
             
-            // "Add to Calendar" button logic
             const btn = document.getElementById('addToCalBtn');
-            btn.onclick = () => downloadSingleEvent(event);
+            // Remove old listeners to prevent duplicates
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.onclick = () => downloadSingleEvent(event);
 
             document.getElementById('eventModal').classList.remove('hidden');
         }
@@ -261,35 +274,35 @@
             document.getElementById('eventModal').classList.add('hidden');
         }
 
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('eventModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-
+        // Generate .ics file with LOCATION included
         function downloadSingleEvent(calEvent) {
             const start = calEvent.start.toISOString().replace(/-|:|\.\d+/g, "");
             const end = calEvent.end.toISOString().replace(/-|:|\.\d+/g, "");
+            const now = new Date().toISOString().replace(/-|:|\.\d+/g, "");
+            const loc = calEvent.extendedProps.location || "";
             
+            // Standard ICS format with LOCATION field
+            // Note: Line endings must be \r\n for maximum compatibility
             const icsContent = [
                 "BEGIN:VCALENDAR",
                 "VERSION:2.0",
+                "PRODID:-//Gym Schedule//EN",
                 "BEGIN:VEVENT",
-                `SUMMARY:${calEvent.title}`,
+                `UID:${now}-${Math.floor(Math.random() * 100000)}@gymschedule`,
+                `DTSTAMP:${now}`,
                 `DTSTART:${start}`,
                 `DTEND:${end}`,
+                `SUMMARY:${calEvent.title}`,
                 `DESCRIPTION:${calEvent.extendedProps.description || ""}`,
-                `LOCATION:${calEvent.extendedProps.location || ""}`,
+                `LOCATION:${loc}`, 
                 "END:VEVENT",
                 "END:VCALENDAR"
-            ].join("\n");
+            ].join("\r\n");
 
             const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', `${calEvent.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ics`);
+            link.setAttribute('download', `${calEvent.title.replace(/[^a-z0-9]/gi, '_')}.ics`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
