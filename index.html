@@ -215,7 +215,6 @@
                 });
 
                 populateDropdowns();
-                // Apply filters (checking localStorage)
                 applyFilters(false);
 
             } catch (e) { console.error(e); }
@@ -235,21 +234,19 @@
             actSelect.innerHTML = '<option value="all">Activity (All)</option>';
             locSelect.innerHTML = '<option value="all">Location (All)</option>';
 
-            // FEATURE 2: CACHING
-            // Load saved settings
             const savedAct = localStorage.getItem('gym_activity');
             const savedLoc = localStorage.getItem('gym_location');
 
             Array.from(activitySet).sort().forEach(act => {
                 let opt = document.createElement('option');
                 opt.value = act; opt.innerText = act; 
-                if (savedAct === act) opt.selected = true; // Select if matches saved
+                if (savedAct === act) opt.selected = true; 
                 actSelect.appendChild(opt);
             });
             Array.from(locationSet).sort().forEach(loc => {
                 let opt = document.createElement('option');
                 opt.value = loc; opt.innerText = loc; 
-                if (savedLoc === loc) opt.selected = true; // Select if matches saved
+                if (savedLoc === loc) opt.selected = true; 
                 locSelect.appendChild(opt);
             });
         }
@@ -261,7 +258,6 @@
             const selectedActivity = actSelect.value;
             const selectedLocation = locSelect.value;
 
-            // Save to LocalStorage if user changed it manually
             if (saveToCache) {
                 localStorage.setItem('gym_activity', selectedActivity);
                 localStorage.setItem('gym_location', selectedLocation);
@@ -279,11 +275,8 @@
         function resetFilters() {
             document.getElementById('activityFilter').value = 'all';
             document.getElementById('locationFilter').value = 'all';
-            
-            // Clear cache
             localStorage.removeItem('gym_activity');
             localStorage.removeItem('gym_location');
-            
             applyFilters(true);
         }
 
@@ -320,13 +313,18 @@
             document.getElementById('eventModal').classList.add('hidden');
         }
 
+        // SIMPLIFIED CLEANER: Just strips tags, returns text.
         function cleanDescription(html) {
             if (!html) return "";
+            // Replace <br> with newline char for ICS
+            let text = html.replace(/<br\s*\/?>/gi, '\\n'); 
+            // Strip other tags
             let tempDiv = document.createElement("div");
-            tempDiv.innerHTML = html.replace(/<br\s*\/?>/gi, '\n');
+            tempDiv.innerHTML = text;
             return tempDiv.textContent || tempDiv.innerText || "";
         }
 
+        // ESCAPE for ICS (RFC 5545)
         function escapeICS(str) {
             if (!str) return "";
             return str.replace(/\\/g, "\\\\")
@@ -345,18 +343,21 @@
                    pad(icalTime.second);
         }
 
-        // FIX FOR IPHONE: Use Web Share API if available
-        async function downloadSingleEvent(calEvent) {
+        function downloadSingleEvent(calEvent) {
             const startStr = formatIcalTime(calEvent.extendedProps.icalStart);
             const endStr = formatIcalTime(calEvent.extendedProps.icalEnd);
             const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, ""); 
-            
+
+            // Clean data
             const title = escapeICS(calEvent.title);
-            const plainDesc = cleanDescription(calEvent.extendedProps.description || "");
-            const description = escapeICS(plainDesc);
             const location = escapeICS(calEvent.extendedProps.location || "");
             
-            // Standard VTIMEZONE for broad compatibility
+            // Simplified Description cleaning
+            let rawDesc = calEvent.extendedProps.description || "";
+            let plainDesc = cleanDescription(rawDesc);
+            const description = escapeICS(plainDesc);
+
+            // Timezone block
             const vTimezone = 
 `BEGIN:VTIMEZONE
 TZID:America/Toronto
@@ -394,25 +395,7 @@ END:VTIMEZONE`;
                 "END:VCALENDAR"
             ].join("\r\n");
 
-            // --- IOS FIX START ---
-            // If the browser supports native sharing (iOS/Android), use that.
-            // This bypasses the "Download to Files" issue.
-            if (navigator.share) {
-                const file = new File([icsContent], `${calEvent.title}.ics`, { type: 'text/calendar' });
-                try {
-                    await navigator.share({
-                        files: [file],
-                        title: calEvent.title,
-                        text: 'Add to Calendar'
-                    });
-                    return; // Stop if share was successful
-                } catch (err) {
-                    console.log("Share failed or cancelled, falling back to download", err);
-                }
-            }
-            // --- IOS FIX END ---
-
-            // Fallback for Desktop / non-sharing browsers
+            // DIRECT DOWNLOAD (Works best on iOS Safari)
             const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
