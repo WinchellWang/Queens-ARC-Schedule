@@ -30,15 +30,10 @@
     <div class="max-w-7xl mx-auto bg-white min-h-screen md:min-h-0 md:rounded-xl md:shadow-lg md:my-6 overflow-hidden flex flex-col">
         
         <div class="p-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-white sticky top-0 z-30 shadow-sm md:shadow-none md:static">
-            <div class="text-center md:text-left">
+            <div class="text-center md:text-left w-full">
                 <h1 class="text-2xl font-bold text-gray-900">Gym Schedule</h1>
                 <p class="text-xs text-gray-500 mt-1">Tap an event to add to calendar</p>
             </div>
-            
-            <a href="webcal://ifgical.api.pgaskin.net/110.ics" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-lg shadow transition flex justify-center items-center text-sm">
-                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/></svg>
-                Sync All
-            </a>
         </div>
 
         <div class="bg-gray-50 p-3 border-b border-gray-100">
@@ -313,18 +308,14 @@
             document.getElementById('eventModal').classList.add('hidden');
         }
 
-        // SIMPLIFIED CLEANER: Just strips tags, returns text.
         function cleanDescription(html) {
             if (!html) return "";
-            // Replace <br> with newline char for ICS
             let text = html.replace(/<br\s*\/?>/gi, '\\n'); 
-            // Strip other tags
             let tempDiv = document.createElement("div");
             tempDiv.innerHTML = text;
             return tempDiv.textContent || tempDiv.innerText || "";
         }
 
-        // ESCAPE for ICS (RFC 5545)
         function escapeICS(str) {
             if (!str) return "";
             return str.replace(/\\/g, "\\\\")
@@ -343,21 +334,19 @@
                    pad(icalTime.second);
         }
 
+        // IOS FIX: Use Data URI navigation instead of Blob Download
         function downloadSingleEvent(calEvent) {
             const startStr = formatIcalTime(calEvent.extendedProps.icalStart);
             const endStr = formatIcalTime(calEvent.extendedProps.icalEnd);
             const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, ""); 
 
-            // Clean data
             const title = escapeICS(calEvent.title);
             const location = escapeICS(calEvent.extendedProps.location || "");
             
-            // Simplified Description cleaning
             let rawDesc = calEvent.extendedProps.description || "";
             let plainDesc = cleanDescription(rawDesc);
             const description = escapeICS(plainDesc);
 
-            // Timezone block
             const vTimezone = 
 `BEGIN:VTIMEZONE
 TZID:America/Toronto
@@ -395,14 +384,24 @@ END:VTIMEZONE`;
                 "END:VCALENDAR"
             ].join("\r\n");
 
-            // DIRECT DOWNLOAD (Works best on iOS Safari)
-            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', `${calEvent.title.replace(/[^a-z0-9]/gi, '_')}.ics`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // iOS DETECTION
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+            if (isIOS) {
+                // FORCE OPEN: This is the most reliable method for iOS Safari
+                // It treats the string as a calendar file opening request rather than a file download
+                const uri = "data:text/calendar;charset=utf-8," + encodeURIComponent(icsContent);
+                window.location.href = uri; 
+            } else {
+                // DESKTOP/ANDROID: Standard Download
+                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.setAttribute('download', `${calEvent.title.replace(/[^a-z0-9]/gi, '_')}.ics`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         }
     </script>
 </body>
