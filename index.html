@@ -15,7 +15,8 @@
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    
     <script>
         tailwind.config = {
             darkMode: 'media', 
@@ -61,7 +62,7 @@
         
         <div class="bg-white dark:bg-darkcard rounded-xl shadow-lg p-4 md:p-6 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 border border-gray-100 dark:border-gray-800">
             <div class="flex items-center gap-4">
-                <div class="bg-white p-0 rounded-full shadow-sm border border-gray-100 overflow-hidden w-12 h-12">
+                <div class="bg-white p-0 rounded-2xl shadow-sm border border-gray-100 overflow-hidden w-12 h-12 flex-shrink-0">
                     <img src="https://pbs.twimg.com/profile_images/1837229055793344512/J8qzoD5-_400x400.jpg" alt="Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
@@ -331,10 +332,9 @@
         }
 
         // --- SAFE DESCRIPTION CLEANER (DOMParser) ---
-        // This ensures the description is stripped of HTML tags properly for the calendar file
         function cleanDescription(html) {
             if (!html) return "";
-            // Replace <br> with newlines first so they don't disappear
+            // Replace <br> with newlines first
             const txt = html.replace(/<br\s*\/?>/gi, '\n');
             const doc = new DOMParser().parseFromString(txt, 'text/html');
             return doc.body.textContent || "";
@@ -348,14 +348,17 @@
                       .replace(/\n/g, "\\n");
         }
 
-        // --- REVERTED TO BLOB DOWNLOAD (Restored Working Method) ---
+        // --- FIX FOR CALENDAR FILE GENERATION ---
         function downloadSingleEvent(calEvent) {
             const start = calEvent.extendedProps.icalStart;
             const end = calEvent.extendedProps.icalEnd;
             const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
 
+            // BUG FIX: Strictly ensure we are returning STRINGS, not numbers.
+            // Previously, pad(10) returned a number, causing 2025 + 10 = 2035.
+            const pad = n => n < 10 ? '0'+n : ''+n; 
+
             const formatIcal = (t) => {
-                const pad = n => n < 10 ? '0'+n : n;
                 return t.year + pad(t.month) + pad(t.day) + 'T' + pad(t.hour) + pad(t.minute) + pad(t.second);
             };
 
@@ -364,7 +367,7 @@
             const rawDesc = calEvent.extendedProps.description || "";
             const description = escapeICS(cleanDescription(rawDesc));
 
-            // Standard ICS content (VTIMEZONE included)
+            // Standard ICS content
             const icsContent = 
 `BEGIN:VCALENDAR
 VERSION:2.0
@@ -397,7 +400,7 @@ LOCATION:${location}
 END:VEVENT
 END:VCALENDAR`;
 
-            // Standard Blob Download
+            // Standard Blob Download (This method works on iOS if the file is valid)
             const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
@@ -419,7 +422,6 @@ END:VCALENDAR`;
             
             document.getElementById('modalTime').innerText = `${dateStr} • ${timeStr}`;
             
-            // Web modal shows HTML description
             const desc = event.extendedProps.description;
             const descEl = document.getElementById('modalDesc');
             if (desc) {
