@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Schedule</title>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .fc-event { cursor: pointer; }
+    </style>
+</head>
+<body class="bg-gray-100 p-4">
+
+    <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Gym Schedule</h1>
+            
+            <div class="flex gap-2 mt-4 md:mt-0">
+                <a href="webcal://ifgical.api.pgaskin.net/110.ics" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/></svg>
+                    Sync to Phone (Subscribe)
+                </a>
+            </div>
+        </div>
+
+        <div id='calendar'></div>
+    </div>
+
+    <div id="eventModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <h3 id="modalTitle" class="text-lg font-bold mb-2"></h3>
+            <p id="modalTime" class="text-gray-600 mb-4"></p>
+            <p id="modalDesc" class="text-sm text-gray-500 mb-4 whitespace-pre-wrap"></p>
+            
+            <div class="flex justify-end gap-2">
+                <button onclick="closeModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">Close</button>
+                <button id="addToCalBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add this Event</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let calendar;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('calendar');
+            
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                slotMinTime: "06:00:00", // Start calendar at 6 AM
+                slotMaxTime: "23:00:00",
+                height: 'auto',
+                nowIndicator: true,
+                eventClick: function(info) {
+                    showModal(info.event);
+                }
+            });
+
+            calendar.render();
+            fetchAndParseICS();
+        });
+
+        // 1. Fetch the local ICS file (downloaded by GitHub Action)
+        async function fetchAndParseICS() {
+            try {
+                // We fetch the local file 'gym.ics' which the GitHub Action creates
+                // If testing locally, ensure you have a dummy 'gym.ics' file
+                const response = await fetch('./gym.ics');
+                if (!response.ok) throw new Error("Could not find gym.ics");
+                const icsData = await response.text();
+                
+                parseICS(icsData);
+            } catch (error) {
+                console.error("Error loading ICS:", error);
+                // Fallback for local testing or if action hasn't run yet
+                alert("Schedule file not found. Wait for the GitHub Action to run once, or ensure 'gym.ics' is in the repo.");
+            }
+        }
+
+        // 2. Parse ICS data using ICAL.js
+        function parseICS(icsData) {
+            const jcalData = ICAL.parse(icsData);
+            const comp = new ICAL.Component(jcalData);
+            const events = comp.getAllSubcomponents('vevent');
+
+            const calendarEvents = events.map(event => {
+                const vevent = new ICAL.Event(event);
+                return {
+                    title: vevent.summary,
+                    start: vevent.startDate.toString(),
+                    end: vevent.endDate.toString(),
+                    description: vevent.description,
+                    location: vevent.location,
+                    // Store raw event for "Add to Calendar" generation
+                    extendedProps: {
+                        rawEvent: event
+                    }
+                };
+            });
+
+            calendar.addEventSource(calendarEvents);
+        }
+
+        // 3. Modal & "Add to Calendar" Logic
+        function showModal(event) {
+            document.getElementById('modalTitle').innerText = event.title;
+            document.getElementById('modalTime').innerText = 
+                event.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' - ' +
+                event.end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('modalDesc').innerText = event.extendedProps.description || "No description";
+            
+            // Setup Single Event Download
+            const btn = document.getElementById('addToCalBtn');
+            btn.onclick = () => downloadSingleEvent(event);
+
+            document.getElementById('eventModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('eventModal').classList.add('hidden');
+        }
+
+        // Generate a mini .ics file for a single event
+        function downloadSingleEvent(calEvent) {
+            // We reconstruct a simple ICS for this specific event
+            const start = calEvent.start.toISOString().replace(/-|:|\.\d+/g, "");
+            const end = calEvent.end.toISOString().replace(/-|:|\.\d+/g, "");
+            
+            const icsContent = [
+                "BEGIN:VCALENDAR",
+                "VERSION:2.0",
+                "BEGIN:VEVENT",
+                `SUMMARY:${calEvent.title}`,
+                `DTSTART:${start}`,
+                `DTEND:${end}`,
+                `DESCRIPTION:${calEvent.extendedProps.description || ""}`,
+                `LOCATION:${calEvent.extendedProps.location || ""}`,
+                "END:VEVENT",
+                "END:VCALENDAR"
+            ].join("\n");
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', `${calEvent.title}.ics`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
