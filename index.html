@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Queen's ARC Open Rec Schedule</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💪</text></svg>">
+    <link rel="icon" href="https://rec.gogaelsgo.com/images/logos/site/site.png">
     
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
@@ -29,14 +29,39 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
         .fc-event { cursor: pointer; border: none; }
         
-        /* Dark Mode Overrides for FullCalendar */
+        /* --- DARK MODE FIXES FOR FULLCALENDAR --- */
         @media (prefers-color-scheme: dark) {
-            .fc-theme-standard td, .fc-theme-standard th { border-color: #374151; } /* gray-700 */
+            /* 1. Header Cells (Days of Week) - Background & Text */
+            .fc-theme-standard th { 
+                background-color: #1e1e1e !important; /* Dark Card Color */
+                border-color: #374151 !important;     /* Dark Grey Border */
+                color: #e5e5e5 !important;            /* Light Text */
+            }
+            
+            /* 2. Links in Header (Mon 12, etc) */
+            .fc-col-header-cell-cushion { 
+                color: #e5e5e5 !important; 
+                text-decoration: none !important; 
+            }
+
+            /* 3. Time Axis (6am, 7am...) on the left */
+            .fc-timegrid-axis {
+                background-color: #1e1e1e !important;
+                border-color: #374151 !important;
+            }
+            .fc-timegrid-slot-label-cushion {
+                color: #9ca3af !important; /* Grey text for time */
+            }
+
+            /* 4. Grid Lines */
+            .fc-theme-standard td, .fc-theme-standard .fc-scrollgrid { 
+                border-color: #374151 !important; 
+            }
+
+            /* 5. List View Fixes */
             .fc-list-day-cushion { background-color: #374151 !important; color: #f3f4f6 !important; }
             .fc-list-event:hover td { background-color: #374151 !important; }
             .fc .fc-list-event-title { color: #f3f4f6 !important; }
-            .fc-col-header-cell-cushion { color: #f3f4f6; }
-            .fc-timegrid-slot-label-cushion { color: #9ca3af; }
         }
         
         /* Custom Scrollbar for Modal */
@@ -49,9 +74,9 @@
     <div class="flex-grow max-w-7xl mx-auto w-full p-2 md:p-6">
         
         <div class="bg-white dark:bg-darkcard rounded-xl shadow-lg p-4 md:p-6 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 border border-gray-100 dark:border-gray-800">
-            <div class="flex items-center gap-3">
-                <div class="bg-blue-600 p-2 rounded-lg shadow-md">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            <div class="flex items-center gap-4">
+                <div class="bg-white p-1 rounded-lg shadow-sm border border-gray-100">
+                    <img src="https://rec.gogaelsgo.com/images/logos/site/site.png" alt="Logo" class="w-12 h-12 object-contain">
                 </div>
                 <div>
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white leading-tight">Queen's ARC Open Rec</h1>
@@ -163,7 +188,7 @@
                     right: isMobile ? 'listWeek,timeGridDay' : 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
                 buttonText: {
-                    today: 'Today' // Ensure default text is correct
+                    today: 'Today' 
                 },
                 slotMinTime: "06:00:00",
                 slotMaxTime: "23:00:00",
@@ -324,8 +349,6 @@
             applyFilters(true);
         }
 
-        // --- FIXED IOS ADD TO CALENDAR ---
-        // 1. Simplified Description Cleaner: Just plain text, no HTML tags.
         function cleanDescription(desc) {
             if (!desc) return "";
             // Replace <br> with new lines
@@ -340,7 +363,6 @@
             const end = calEvent.extendedProps.icalEnd;
             const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
 
-            // Helper to format ICAL time
             const formatIcal = (t) => {
                 const pad = n => n < 10 ? '0'+n : n;
                 return t.year + pad(t.month) + pad(t.day) + 'T' + pad(t.hour) + pad(t.minute) + pad(t.second);
@@ -349,13 +371,11 @@
             const startStr = formatIcal(start);
             const endStr = formatIcal(end);
 
-            // SIMPLIFIED CLEANING
             const title = calEvent.title.replace(/,/g, '\\,').replace(/;/g, '\\;');
             const location = (calEvent.extendedProps.location || "").replace(/,/g, '\\,').replace(/;/g, '\\;');
             const rawDesc = calEvent.extendedProps.description || "";
             const description = cleanDescription(rawDesc).replace(/,/g, '\\,').replace(/;/g, '\\;');
 
-            // Standard ICS content
             const icsContent = 
 `BEGIN:VCALENDAR
 VERSION:2.0
@@ -371,15 +391,12 @@ LOCATION:${location}
 END:VEVENT
 END:VCALENDAR`;
 
-            // IOS FIX: Use Data URI for direct open
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
             
             if (isIOS) {
-                // This mimics opening a file directly, avoiding the "download" sandbox issue
                 const uri = "data:text/calendar;charset=utf-8," + encodeURIComponent(icsContent);
                 window.location.href = uri; 
             } else {
-                // Desktop/Android
                 const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
                 const link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
@@ -390,7 +407,6 @@ END:VCALENDAR`;
             }
         }
 
-        // Modal Logic
         function showModal(event) {
             document.getElementById('modalTitle').innerText = event.title;
             const loc = event.extendedProps.location || "No location info";
@@ -403,11 +419,10 @@ END:VCALENDAR`;
             
             document.getElementById('modalTime').innerText = `${dateStr} • ${timeStr}`;
             
-            // For the Web Modal, we allow basic HTML (bolding) so it looks nice
             const desc = event.extendedProps.description;
             const descEl = document.getElementById('modalDesc');
             if (desc) {
-                descEl.innerHTML = desc; // Web view keeps HTML
+                descEl.innerHTML = desc; 
                 descEl.classList.remove('hidden');
             } else {
                 descEl.classList.add('hidden');
