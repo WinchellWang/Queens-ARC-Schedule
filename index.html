@@ -26,7 +26,7 @@
                         darkbg: '#121212',
                         darkcard: '#1e1e1e',
                         darktext: '#e5e5e5',
-                        highlight: '#ea580c' 
+                        queensred: '#b90e31' // Custom Queen's Red
                     }
                 }
             }
@@ -53,11 +53,27 @@
             }
         }
 
-        /* --- PERSISTENT SELECTION COLOR FIX --- */
-        /* Light Mode Selection: Light Orange */
-        .fc-list-event.selected-event td {
-            background-color: #ffedd5 !important; 
-            transition: background-color 0.2s ease;
+        /* --- HOVER EFFECT (QUEEN'S RED) --- */
+        /* Applies to both Hover (Desktop) and Active/Touch (Mobile) */
+        .fc-list-event:hover td,
+        .fc-list-event:active td {
+            background-color: #b90e31 !important; /* Queen's Red */
+            cursor: pointer;
+            transition: background-color 0.1s ease;
+        }
+
+        /* Ensure Text turns White on Hover for readability */
+        .fc-list-event:hover .fc-list-event-title,
+        .fc-list-event:active .fc-list-event-title,
+        .fc-list-event:hover .fc-list-event-time,
+        .fc-list-event:active .fc-list-event-time {
+            color: #ffffff !important;
+        }
+
+        /* Ensure the colored "Dot" turns white on hover so it doesn't clash */
+        .fc-list-event:hover .fc-list-event-dot,
+        .fc-list-event:active .fc-list-event-dot {
+            border-color: #ffffff !important;
         }
 
         /* --- DARK MODE FIXES --- */
@@ -72,14 +88,9 @@
             .fc-timegrid-slot-label-cushion { color: #9ca3af !important; }
             .fc-theme-standard td, .fc-theme-standard .fc-scrollgrid { border-color: #374151 !important; }
             
-            /* List View Dark Mode */
+            /* List View Dark Mode Base */
             .fc-list-day-cushion { background-color: #374151 !important; color: #f3f4f6 !important; }
-            .fc-list-event:hover td { background-color: #374151 !important; }
-            
-            /* Dark Mode Selection: Dark Orange/Red */
-            .fc-list-event.selected-event td {
-                background-color: #7c2d12 !important; 
-            }
+            .fc-list-event:hover td { background-color: #b90e31 !important; } /* Ensure Red overrides dark grey */
             
             .fc .fc-list-event-title { color: #f3f4f6 !important; }
         }
@@ -191,7 +202,6 @@
     <script>
         let calendar;
         let allEvents = [];
-        let selectedElement = null; // Track selected row
         const isMobile = window.innerWidth < 768;
 
         document.getElementById('year').textContent = new Date().getFullYear();
@@ -239,18 +249,6 @@
 
                 eventClick: function(info) {
                     info.jsEvent.preventDefault();
-                    
-                    // HIGHLIGHT LOGIC:
-                    // 1. Remove highlight from previous selection
-                    if (selectedElement) {
-                        selectedElement.classList.remove('selected-event');
-                    }
-                    // 2. Add highlight to current selection
-                    if (info.view.type.startsWith('list')) {
-                        selectedElement = info.el;
-                        selectedElement.classList.add('selected-event');
-                    }
-
                     showModal(info.event);
                 }
             });
@@ -454,7 +452,8 @@ END:VCALENDAR`;
             document.body.removeChild(link);
         }
 
-        // --- SCROLL LOCKING FOR IOS (STRONGEST METHOD) ---
+        // --- SCROLL LOCKING FOR IOS ---
+        // This stops the background page from scrolling when the modal is open
         let scrollPosition = 0;
         function lockScroll() {
             scrollPosition = window.scrollY;
@@ -502,12 +501,6 @@ END:VCALENDAR`;
         }
 
         function closeModal() {
-            // Remove highlight when closing
-            if (selectedElement) {
-                selectedElement.classList.remove('selected-event');
-                selectedElement = null;
-            }
-            
             document.getElementById('eventModal').classList.add('hidden');
             unlockScroll();
         }
