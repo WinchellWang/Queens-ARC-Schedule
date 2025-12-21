@@ -4,7 +4,7 @@ Welcome to the Queen's ARC Open Rec Schedule.
 
 This website automatically syncs with the official Queen's University ARC schedule every few hours to provide an easier mobile-friendly interface for students.
 
-Data is fetched from: https://github.com/pgaskin/innosoftfusiongo-schedule
+Data is fetched from: [pgaskin/innosoftfusiongo-schedule](https://github.com/pgaskin/innosoftfusiongo-schedule)
 
 # Features
 - Mobile optimized view
