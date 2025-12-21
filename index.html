@@ -25,7 +25,8 @@
                     colors: {
                         darkbg: '#121212',
                         darkcard: '#1e1e1e',
-                        darktext: '#e5e5e5'
+                        darktext: '#e5e5e5',
+                        highlight: '#ea580c' // Orange for selection
                     }
                 }
             }
@@ -38,12 +39,10 @@
         
         /* --- MOBILE OPTIMIZATIONS --- */
         @media (max-width: 768px) {
-            /* Fix: Shrink Date Title on Mobile so it doesn't break layout */
             .fc-toolbar-title { 
                 font-size: 1.1rem !important; 
                 font-weight: 700 !important;
             }
-            /* Adjust buttons to fit next to the smaller title */
             .fc .fc-button { 
                 padding: 0.3em 0.5em !important; 
                 font-size: 0.85em !important; 
@@ -52,6 +51,13 @@
                 display: flex;
                 align-items: center;
             }
+        }
+
+        /* --- LIST VIEW SELECTION COLOR FIX --- */
+        /* This ensures the row turns ORANGE when clicked/active, distinct from the blue/grey header */
+        .fc-list-event:active td, 
+        .fc-list-event.fc-event-mirror td {
+            background-color: #ffedd5 !important; /* Light Orange in Light Mode */
         }
 
         /* --- DARK MODE FIXES --- */
@@ -65,8 +71,16 @@
             .fc-timegrid-axis { background-color: #1e1e1e !important; }
             .fc-timegrid-slot-label-cushion { color: #9ca3af !important; }
             .fc-theme-standard td, .fc-theme-standard .fc-scrollgrid { border-color: #374151 !important; }
+            
+            /* List View Dark Mode */
             .fc-list-day-cushion { background-color: #374151 !important; color: #f3f4f6 !important; }
             .fc-list-event:hover td { background-color: #374151 !important; }
+            
+            /* Active/Selected State in Dark Mode -> Dark Orange */
+            .fc-list-event:active td {
+                background-color: #7c2d12 !important; /* Dark Orange */
+            }
+            
             .fc .fc-list-event-title { color: #f3f4f6 !important; }
         }
         
@@ -261,16 +275,22 @@
                     const vevent = new ICAL.Event(event);
                     if (!vevent.location || vevent.location.trim() === "") { return; }
 
-                    // --- NEW VIBRANT COLOR PALETTE ---
+                    // --- VIBRANT COLOR PALETTE (Expanded) ---
                     // Default to Bright Orange/Red for high visibility
                     let color = '#ea580c'; // Default: Tailwind Orange-600
                     const summaryLower = vevent.summary.toLowerCase();
                     
-                    if(summaryLower.includes('basketball')) color = '#f59e0b'; // Amber-500 (Bright Orange/Yellow)
-                    if(summaryLower.includes('yoga') || summaryLower.includes('pilates')) color = '#16a34a'; // Green-600
-                    if(summaryLower.includes('swim') || summaryLower.includes('pool')) color = '#0284c7'; // Sky-600
-                    if(summaryLower.includes('zumba') || summaryLower.includes('dance')) color = '#db2777'; // Pink-600
-                    if(summaryLower.includes('barre')) color = '#9333ea'; // Purple-600
+                    // Added specific checks for Badminton, Pickleball, etc.
+                    if(summaryLower.includes('basketball')) color = '#f59e0b'; // Amber (Yellow-Orange)
+                    if(summaryLower.includes('badminton')) color = '#ea580c'; // Orange-600 (Distinct from header)
+                    if(summaryLower.includes('pickleball')) color = '#9333ea'; // Purple
+                    if(summaryLower.includes('volleyball')) color = '#0d9488'; // Teal
+                    if(summaryLower.includes('futsal') || summaryLower.includes('soccer')) color = '#be123c'; // Rose
+                    if(summaryLower.includes('spikeball')) color = '#84cc16'; // Lime
+                    if(summaryLower.includes('yoga') || summaryLower.includes('pilates')) color = '#16a34a'; // Green
+                    if(summaryLower.includes('swim') || summaryLower.includes('pool') || summaryLower.includes('aquafit')) color = '#0284c7'; // Sky Blue
+                    if(summaryLower.includes('zumba') || summaryLower.includes('dance')) color = '#db2777'; // Pink
+                    if(summaryLower.includes('barre')) color = '#7c3aed'; // Violet
 
                     allEvents.push({
                         title: vevent.summary,
@@ -372,7 +392,6 @@
             const end = calEvent.extendedProps.icalEnd;
             const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
 
-            // FIX: Ensure we pad with STRINGS to avoid math addition errors
             const pad = n => n < 10 ? '0' + n : '' + n;
 
             const formatIcal = (t) => {
@@ -425,9 +444,25 @@ END:VCALENDAR`;
             document.body.removeChild(link);
         }
 
+        // --- SCROLL LOCKING FOR IOS ---
+        // This is the robust method to freeze the background page
+        let scrollPosition = 0;
+        function lockScroll() {
+            scrollPosition = window.scrollY;
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollPosition}px`;
+            document.body.style.width = '100%';
+        }
+
+        function unlockScroll() {
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            window.scrollTo(0, scrollPosition);
+        }
+
         function showModal(event) {
-            // FIX: Lock background scrolling
-            document.body.classList.add('overflow-hidden');
+            lockScroll(); // Freeze background
 
             document.getElementById('modalTitle').innerText = event.title;
             const loc = event.extendedProps.location || "No location info";
@@ -458,9 +493,8 @@ END:VCALENDAR`;
         }
 
         function closeModal() {
-            // FIX: Unlock background scrolling
-            document.body.classList.remove('overflow-hidden');
             document.getElementById('eventModal').classList.add('hidden');
+            unlockScroll(); // Unfreeze background
         }
     </script>
 </body>
