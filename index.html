@@ -3,96 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gym Schedule</title>
+    <title>Queen's ARC Open Rec Schedule</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💪</text></svg>">
+    
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'media', // Uses system settings
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#121212',
+                        darkcard: '#1e1e1e',
+                        darktext: '#e5e5e5'
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
         .fc-event { cursor: pointer; border: none; }
         
-        .fc-list-event-title { color: #1f2937 !important; } 
-        .fc-list-day-cushion { background-color: #f3f4f6 !important; }
-        
-        #modalDesc a { color: #2563eb; text-decoration: underline; }
-        
-        @media (max-width: 640px) {
-            .fc-toolbar { flex-direction: column; gap: 10px; }
-            .fc-toolbar-title { font-size: 1.25rem !important; }
-            .fc .fc-button { padding: 0.4em 0.65em; font-size: 0.85em; }
+        /* Dark Mode Overrides for FullCalendar */
+        @media (prefers-color-scheme: dark) {
+            .fc-theme-standard td, .fc-theme-standard th { border-color: #374151; } /* gray-700 */
+            .fc-list-day-cushion { background-color: #374151 !important; color: #f3f4f6 !important; }
+            .fc-list-event:hover td { background-color: #374151 !important; }
+            .fc .fc-list-event-title { color: #f3f4f6 !important; }
+            .fc-col-header-cell-cushion { color: #f3f4f6; }
+            .fc-timegrid-slot-label-cushion { color: #9ca3af; }
         }
+        
+        /* Custom Scrollbar for Modal */
+        #modalDesc::-webkit-scrollbar { width: 6px; }
+        #modalDesc::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-darktext flex flex-col min-h-screen">
 
-    <div class="max-w-7xl mx-auto bg-white min-h-screen md:min-h-0 md:rounded-xl md:shadow-lg md:my-6 overflow-hidden flex flex-col">
+    <div class="flex-grow max-w-7xl mx-auto w-full p-2 md:p-6">
         
-        <div class="p-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-white sticky top-0 z-30 shadow-sm md:shadow-none md:static">
-            <div class="text-center md:text-left w-full">
-                <h1 class="text-2xl font-bold text-gray-900">Gym Schedule</h1>
-                <p class="text-xs text-gray-500 mt-1">Tap an event to add to calendar</p>
+        <div class="bg-white dark:bg-darkcard rounded-xl shadow-lg p-4 md:p-6 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 border border-gray-100 dark:border-gray-800">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2 rounded-lg shadow-md">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white leading-tight">Queen's ARC Open Rec</h1>
+                    <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-1">Tap an event to add to calendar</p>
+                </div>
             </div>
         </div>
 
-        <div class="bg-gray-50 p-3 border-b border-gray-100">
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
-                <div class="relative col-span-1">
-                    <select id="activityFilter" onchange="applyFilters(true)" class="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded text-sm leading-tight focus:outline-none focus:border-blue-500">
+        <div class="bg-white dark:bg-darkcard rounded-xl shadow-lg p-4 mb-6 border border-gray-100 dark:border-gray-800">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div class="md:col-span-1">
+                    <select id="activityFilter" onchange="applyFilters(true)" class="block w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white py-2.5 px-4 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
                         <option value="all">Activity (All)</option>
                     </select>
                 </div>
-                <div class="relative col-span-1">
-                    <select id="locationFilter" onchange="applyFilters(true)" class="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded text-sm leading-tight focus:outline-none focus:border-blue-500">
+                <div class="md:col-span-1">
+                    <select id="locationFilter" onchange="applyFilters(true)" class="block w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white py-2.5 px-4 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
                         <option value="all">Location (All)</option>
                     </select>
                 </div>
-                <button onclick="resetFilters()" class="col-span-2 md:col-span-1 bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-2 px-4 rounded text-sm transition">
-                    Reset
+                
+                <button onclick="resetFilters()" class="md:col-span-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold py-2.5 px-4 rounded-lg transition">
+                    Reset Filters
+                </button>
+                <button onclick="goToToday()" class="md:col-span-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg shadow transition flex justify-center items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Go to Today
                 </button>
             </div>
         </div>
 
-        <div class="flex-grow p-2 md:p-6 pb-20 md:pb-6">
+        <div class="bg-white dark:bg-darkcard rounded-xl shadow-lg p-2 md:p-6 border border-gray-100 dark:border-gray-800">
             <div id='calendar'></div>
         </div>
     </div>
 
-    <div id="eventModal" class="fixed inset-0 z-50 flex items-end md:items-center justify-center pointer-events-none hidden">
-        <div class="absolute inset-0 bg-black bg-opacity-50 pointer-events-auto transition-opacity backdrop-blur-sm" onclick="closeModal()"></div>
-        
-        <div class="bg-white w-full md:w-96 md:rounded-2xl rounded-t-2xl p-6 pointer-events-auto shadow-2xl transform transition-transform duration-300 ease-out">
-            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 md:hidden"></div>
+    <footer class="mt-8 py-8 bg-white dark:bg-darkcard border-t border-gray-200 dark:border-gray-800 text-center">
+        <div class="flex flex-col items-center gap-4">
+            <a href="about.html" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold">About</a>
             
-            <h3 id="modalTitle" class="text-xl font-extrabold text-gray-900 mb-2 leading-tight"></h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm">
+                Copyright © Winchell Wang <span id="year"></span>
+            </p>
+
+            <a href="https://github.com/WinchellWang/Queens-ARC-Schedule" target="_blank" class="inline-flex items-center gap-2 bg-[#24292e] hover:bg-[#2f363d] text-white px-4 py-2 rounded-md font-semibold text-sm transition shadow-sm">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/></svg>
+                Star this on GitHub
+            </a>
+        </div>
+    </footer>
+
+    <div id="eventModal" class="fixed inset-0 z-50 flex items-end md:items-center justify-center pointer-events-none hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-60 pointer-events-auto transition-opacity backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="bg-white dark:bg-darkcard w-full md:w-96 md:rounded-2xl rounded-t-2xl p-6 pointer-events-auto shadow-2xl transform transition-transform duration-300 ease-out border border-gray-200 dark:border-gray-700">
+            <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-6 md:hidden"></div>
+            
+            <h3 id="modalTitle" class="text-xl font-extrabold text-gray-900 dark:text-white mb-2 leading-tight"></h3>
             
             <div class="space-y-4 mb-6">
                 <div class="flex items-start">
-                    <div class="bg-blue-50 p-2 rounded-lg mr-3">
-                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <div class="bg-blue-50 dark:bg-gray-700 p-2 rounded-lg mr-3">
+                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wide">Location</p>
-                        <p id="locText" class="text-gray-800 font-medium text-sm"></p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wide">Location</p>
+                        <p id="locText" class="text-gray-800 dark:text-gray-200 font-medium text-sm"></p>
                     </div>
                 </div>
 
                 <div class="flex items-start">
-                    <div class="bg-green-50 p-2 rounded-lg mr-3">
-                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div class="bg-green-50 dark:bg-gray-700 p-2 rounded-lg mr-3">
+                        <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wide">Time (Kingston/Eastern)</p>
-                        <p id="modalTime" class="text-gray-800 font-medium text-sm"></p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wide">Time</p>
+                        <p id="modalTime" class="text-gray-800 dark:text-gray-200 font-medium text-sm"></p>
                     </div>
                 </div>
             </div>
 
-            <div id="modalDesc" class="text-sm text-gray-600 mb-6 bg-gray-50 p-3 rounded-lg max-h-32 overflow-y-auto hidden break-words"></div>
+            <div id="modalDesc" class="text-sm text-gray-600 dark:text-gray-300 mb-6 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg max-h-32 overflow-y-auto hidden break-words border border-gray-100 dark:border-gray-700"></div>
 
             <div class="grid grid-cols-2 gap-3">
-                <button onclick="closeModal()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl transition">Close</button>
+                <button onclick="closeModal()" class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-white font-bold py-3 px-4 rounded-xl transition">Close</button>
                 <button id="addToCalBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition flex justify-center items-center">
                     Add to Calendar
                 </button>
@@ -106,6 +149,9 @@
         let allEvents = [];
         const isMobile = window.innerWidth < 768;
 
+        // Auto-set Footer Year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
             
@@ -115,6 +161,9 @@
                     left: 'prev,next',
                     center: 'title',
                     right: isMobile ? 'listWeek,timeGridDay' : 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                buttonText: {
+                    today: 'Today' // Ensure default text is correct
                 },
                 slotMinTime: "06:00:00",
                 slotMaxTime: "23:00:00",
@@ -130,8 +179,8 @@
                     if (arg.view.type.startsWith('list')) {
                         let html = `
                             <div class="flex flex-col w-full py-1">
-                                <div class="font-bold text-gray-900 text-sm">${title}</div>
-                                ${location ? `<div class="text-xs text-blue-600 mt-0.5">📍 ${location}</div>` : ''}
+                                <div class="font-bold text-gray-900 dark:text-white text-sm">${title}</div>
+                                ${location ? `<div class="text-xs text-blue-600 dark:text-blue-400 mt-0.5">📍 ${location}</div>` : ''}
                             </div>
                         `;
                         return { html: html };
@@ -158,6 +207,10 @@
             fetchAndParseICS();
         });
 
+        function goToToday() {
+            calendar.today();
+        }
+
         async function fetchAndParseICS() {
             try {
                 const response = await fetch('./gym.ics');
@@ -181,12 +234,10 @@
                     if (status && status.toUpperCase() === 'CANCELLED') { return; }
                     
                     const vevent = new ICAL.Event(event);
-
                     if (!vevent.location || vevent.location.trim() === "") { return; }
 
                     let color = '#3b82f6';
                     const summaryLower = vevent.summary.toLowerCase();
-                    
                     if(summaryLower.includes('basketball')) color = '#f97316'; 
                     if(summaryLower.includes('yoga') || summaryLower.includes('pilates')) color = '#10b981';
                     if(summaryLower.includes('swim') || summaryLower.includes('pool')) color = '#0ea5e9';
@@ -211,7 +262,6 @@
 
                 populateDropdowns();
                 applyFilters(false);
-
             } catch (e) { console.error(e); }
         }
 
@@ -249,7 +299,6 @@
         function applyFilters(saveToCache = false) {
             const actSelect = document.getElementById('activityFilter');
             const locSelect = document.getElementById('locationFilter');
-            
             const selectedActivity = actSelect.value;
             const selectedLocation = locSelect.value;
 
@@ -275,6 +324,73 @@
             applyFilters(true);
         }
 
+        // --- FIXED IOS ADD TO CALENDAR ---
+        // 1. Simplified Description Cleaner: Just plain text, no HTML tags.
+        function cleanDescription(desc) {
+            if (!desc) return "";
+            // Replace <br> with new lines
+            let txt = desc.replace(/<br\s*\/?>/gi, '\\n');
+            // Remove all other HTML tags
+            txt = txt.replace(/<[^>]*>?/gm, '');
+            return txt;
+        }
+
+        function downloadSingleEvent(calEvent) {
+            const start = calEvent.extendedProps.icalStart;
+            const end = calEvent.extendedProps.icalEnd;
+            const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
+
+            // Helper to format ICAL time
+            const formatIcal = (t) => {
+                const pad = n => n < 10 ? '0'+n : n;
+                return t.year + pad(t.month) + pad(t.day) + 'T' + pad(t.hour) + pad(t.minute) + pad(t.second);
+            };
+
+            const startStr = formatIcal(start);
+            const endStr = formatIcal(end);
+
+            // SIMPLIFIED CLEANING
+            const title = calEvent.title.replace(/,/g, '\\,').replace(/;/g, '\\;');
+            const location = (calEvent.extendedProps.location || "").replace(/,/g, '\\,').replace(/;/g, '\\;');
+            const rawDesc = calEvent.extendedProps.description || "";
+            const description = cleanDescription(rawDesc).replace(/,/g, '\\,').replace(/;/g, '\\;');
+
+            // Standard ICS content
+            const icsContent = 
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Gym Schedule//EN
+BEGIN:VEVENT
+UID:${now}@gymschedule
+DTSTAMP:${now}
+DTSTART;TZID=America/Toronto:${startStr}
+DTEND;TZID=America/Toronto:${endStr}
+SUMMARY:${title}
+DESCRIPTION:${description}
+LOCATION:${location}
+END:VEVENT
+END:VCALENDAR`;
+
+            // IOS FIX: Use Data URI for direct open
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            
+            if (isIOS) {
+                // This mimics opening a file directly, avoiding the "download" sandbox issue
+                const uri = "data:text/calendar;charset=utf-8," + encodeURIComponent(icsContent);
+                window.location.href = uri; 
+            } else {
+                // Desktop/Android
+                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.setAttribute('download', `${calEvent.title.replace(/[^a-z0-9]/gi, '_')}.ics`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        // Modal Logic
         function showModal(event) {
             document.getElementById('modalTitle').innerText = event.title;
             const loc = event.extendedProps.location || "No location info";
@@ -287,10 +403,11 @@
             
             document.getElementById('modalTime').innerText = `${dateStr} • ${timeStr}`;
             
+            // For the Web Modal, we allow basic HTML (bolding) so it looks nice
             const desc = event.extendedProps.description;
             const descEl = document.getElementById('modalDesc');
             if (desc) {
-                descEl.innerHTML = desc;
+                descEl.innerHTML = desc; // Web view keeps HTML
                 descEl.classList.remove('hidden');
             } else {
                 descEl.classList.add('hidden');
@@ -306,102 +423,6 @@
 
         function closeModal() {
             document.getElementById('eventModal').classList.add('hidden');
-        }
-
-        function cleanDescription(html) {
-            if (!html) return "";
-            let text = html.replace(/<br\s*\/?>/gi, '\\n'); 
-            let tempDiv = document.createElement("div");
-            tempDiv.innerHTML = text;
-            return tempDiv.textContent || tempDiv.innerText || "";
-        }
-
-        function escapeICS(str) {
-            if (!str) return "";
-            return str.replace(/\\/g, "\\\\")
-                      .replace(/;/g, "\\;")
-                      .replace(/,/g, "\\,")
-                      .replace(/\n/g, "\\n");
-        }
-
-        function formatIcalTime(icalTime) {
-            const pad = (n) => n < 10 ? '0' + n : n;
-            return icalTime.year + 
-                   pad(icalTime.month) + 
-                   pad(icalTime.day) + 'T' + 
-                   pad(icalTime.hour) + 
-                   pad(icalTime.minute) + 
-                   pad(icalTime.second);
-        }
-
-        // IOS FIX: Use Data URI navigation instead of Blob Download
-        function downloadSingleEvent(calEvent) {
-            const startStr = formatIcalTime(calEvent.extendedProps.icalStart);
-            const endStr = formatIcalTime(calEvent.extendedProps.icalEnd);
-            const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, ""); 
-
-            const title = escapeICS(calEvent.title);
-            const location = escapeICS(calEvent.extendedProps.location || "");
-            
-            let rawDesc = calEvent.extendedProps.description || "";
-            let plainDesc = cleanDescription(rawDesc);
-            const description = escapeICS(plainDesc);
-
-            const vTimezone = 
-`BEGIN:VTIMEZONE
-TZID:America/Toronto
-BEGIN:DAYLIGHT
-TZOFFSETFROM:-0500
-TZOFFSETTO:-0400
-TZNAME:EDT
-DTSTART:19700308T020000
-RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
-END:DAYLIGHT
-BEGIN:STANDARD
-TZOFFSETFROM:-0400
-TZOFFSETTO:-0500
-TZNAME:EST
-DTSTART:19701101T020000
-RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
-END:STANDARD
-END:VTIMEZONE`;
-
-            const icsContent = [
-                "BEGIN:VCALENDAR",
-                "VERSION:2.0",
-                "PRODID:-//Gym Schedule//EN",
-                "METHOD:PUBLISH",
-                vTimezone,
-                "BEGIN:VEVENT",
-                `UID:${now}-${Math.floor(Math.random() * 100000)}@gymschedule`,
-                `DTSTAMP:${now}`,
-                `DTSTART;TZID=America/Toronto:${startStr}`,
-                `DTEND;TZID=America/Toronto:${endStr}`,
-                `SUMMARY:${title}`,
-                `DESCRIPTION:${description}`,
-                `LOCATION:${location}`, 
-                "END:VEVENT",
-                "END:VCALENDAR"
-            ].join("\r\n");
-
-            // iOS DETECTION
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-            if (isIOS) {
-                // FORCE OPEN: This is the most reliable method for iOS Safari
-                // It treats the string as a calendar file opening request rather than a file download
-                const uri = "data:text/calendar;charset=utf-8," + encodeURIComponent(icsContent);
-                window.location.href = uri; 
-            } else {
-                // DESKTOP/ANDROID: Standard Download
-                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.setAttribute('download', `${calEvent.title.replace(/[^a-z0-9]/gi, '_')}.ics`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
         }
     </script>
 </body>
