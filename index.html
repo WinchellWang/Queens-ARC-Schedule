@@ -26,7 +26,7 @@
                         darkbg: '#121212',
                         darkcard: '#1e1e1e',
                         darktext: '#e5e5e5',
-                        highlight: '#ea580c' // Orange for selection
+                        highlight: '#ea580c' 
                     }
                 }
             }
@@ -53,11 +53,11 @@
             }
         }
 
-        /* --- LIST VIEW SELECTION COLOR FIX --- */
-        /* This ensures the row turns ORANGE when clicked/active, distinct from the blue/grey header */
-        .fc-list-event:active td, 
-        .fc-list-event.fc-event-mirror td {
-            background-color: #ffedd5 !important; /* Light Orange in Light Mode */
+        /* --- PERSISTENT SELECTION COLOR FIX --- */
+        /* Light Mode Selection: Light Orange */
+        .fc-list-event.selected-event td {
+            background-color: #ffedd5 !important; 
+            transition: background-color 0.2s ease;
         }
 
         /* --- DARK MODE FIXES --- */
@@ -76,9 +76,9 @@
             .fc-list-day-cushion { background-color: #374151 !important; color: #f3f4f6 !important; }
             .fc-list-event:hover td { background-color: #374151 !important; }
             
-            /* Active/Selected State in Dark Mode -> Dark Orange */
-            .fc-list-event:active td {
-                background-color: #7c2d12 !important; /* Dark Orange */
+            /* Dark Mode Selection: Dark Orange/Red */
+            .fc-list-event.selected-event td {
+                background-color: #7c2d12 !important; 
             }
             
             .fc .fc-list-event-title { color: #f3f4f6 !important; }
@@ -191,6 +191,7 @@
     <script>
         let calendar;
         let allEvents = [];
+        let selectedElement = null; // Track selected row
         const isMobile = window.innerWidth < 768;
 
         document.getElementById('year').textContent = new Date().getFullYear();
@@ -238,6 +239,18 @@
 
                 eventClick: function(info) {
                     info.jsEvent.preventDefault();
+                    
+                    // HIGHLIGHT LOGIC:
+                    // 1. Remove highlight from previous selection
+                    if (selectedElement) {
+                        selectedElement.classList.remove('selected-event');
+                    }
+                    // 2. Add highlight to current selection
+                    if (info.view.type.startsWith('list')) {
+                        selectedElement = info.el;
+                        selectedElement.classList.add('selected-event');
+                    }
+
                     showModal(info.event);
                 }
             });
@@ -275,22 +288,19 @@
                     const vevent = new ICAL.Event(event);
                     if (!vevent.location || vevent.location.trim() === "") { return; }
 
-                    // --- VIBRANT COLOR PALETTE (Expanded) ---
-                    // Default to Bright Orange/Red for high visibility
-                    let color = '#ea580c'; // Default: Tailwind Orange-600
+                    let color = '#ea580c'; // Default Orange
                     const summaryLower = vevent.summary.toLowerCase();
                     
-                    // Added specific checks for Badminton, Pickleball, etc.
-                    if(summaryLower.includes('basketball')) color = '#f59e0b'; // Amber (Yellow-Orange)
-                    if(summaryLower.includes('badminton')) color = '#ea580c'; // Orange-600 (Distinct from header)
-                    if(summaryLower.includes('pickleball')) color = '#9333ea'; // Purple
-                    if(summaryLower.includes('volleyball')) color = '#0d9488'; // Teal
-                    if(summaryLower.includes('futsal') || summaryLower.includes('soccer')) color = '#be123c'; // Rose
-                    if(summaryLower.includes('spikeball')) color = '#84cc16'; // Lime
-                    if(summaryLower.includes('yoga') || summaryLower.includes('pilates')) color = '#16a34a'; // Green
-                    if(summaryLower.includes('swim') || summaryLower.includes('pool') || summaryLower.includes('aquafit')) color = '#0284c7'; // Sky Blue
-                    if(summaryLower.includes('zumba') || summaryLower.includes('dance')) color = '#db2777'; // Pink
-                    if(summaryLower.includes('barre')) color = '#7c3aed'; // Violet
+                    if(summaryLower.includes('basketball')) color = '#f59e0b';
+                    if(summaryLower.includes('badminton')) color = '#ea580c';
+                    if(summaryLower.includes('pickleball')) color = '#9333ea';
+                    if(summaryLower.includes('volleyball')) color = '#0d9488';
+                    if(summaryLower.includes('futsal') || summaryLower.includes('soccer')) color = '#be123c';
+                    if(summaryLower.includes('spikeball')) color = '#84cc16';
+                    if(summaryLower.includes('yoga') || summaryLower.includes('pilates')) color = '#16a34a';
+                    if(summaryLower.includes('swim') || summaryLower.includes('pool') || summaryLower.includes('aquafit')) color = '#0284c7';
+                    if(summaryLower.includes('zumba') || summaryLower.includes('dance')) color = '#db2777';
+                    if(summaryLower.includes('barre')) color = '#7c3aed';
 
                     allEvents.push({
                         title: vevent.summary,
@@ -444,8 +454,7 @@ END:VCALENDAR`;
             document.body.removeChild(link);
         }
 
-        // --- SCROLL LOCKING FOR IOS ---
-        // This is the robust method to freeze the background page
+        // --- SCROLL LOCKING FOR IOS (STRONGEST METHOD) ---
         let scrollPosition = 0;
         function lockScroll() {
             scrollPosition = window.scrollY;
@@ -462,7 +471,7 @@ END:VCALENDAR`;
         }
 
         function showModal(event) {
-            lockScroll(); // Freeze background
+            lockScroll(); 
 
             document.getElementById('modalTitle').innerText = event.title;
             const loc = event.extendedProps.location || "No location info";
@@ -493,8 +502,14 @@ END:VCALENDAR`;
         }
 
         function closeModal() {
+            // Remove highlight when closing
+            if (selectedElement) {
+                selectedElement.classList.remove('selected-event');
+                selectedElement = null;
+            }
+            
             document.getElementById('eventModal').classList.add('hidden');
-            unlockScroll(); // Unfreeze background
+            unlockScroll();
         }
     </script>
 </body>
