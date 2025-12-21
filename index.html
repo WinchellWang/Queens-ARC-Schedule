@@ -13,14 +13,11 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
         .fc-event { cursor: pointer; border: none; }
         
-        /* FIX: Ensure List View text is always visible and dark */
         .fc-list-event-title { color: #1f2937 !important; } 
         .fc-list-day-cushion { background-color: #f3f4f6 !important; }
         
-        /* Links in description should look like links */
         #modalDesc a { color: #2563eb; text-decoration: underline; }
         
-        /* Mobile Toolbar Fixes */
         @media (max-width: 640px) {
             .fc-toolbar { flex-direction: column; gap: 10px; }
             .fc-toolbar-title { font-size: 1.25rem !important; }
@@ -185,6 +182,12 @@
                 allEvents = [];
 
                 events.forEach(event => {
+                    // 1. FILTER: Check for CANCELLED status immediately
+                    const status = event.getFirstPropertyValue('status');
+                    if (status && status.toUpperCase() === 'CANCELLED') {
+                        return; // Skip this event entirely
+                    }
+
                     const vevent = new ICAL.Event(event);
                     let color = '#3b82f6';
                     const summaryLower = vevent.summary.toLowerCase();
@@ -204,7 +207,6 @@
                         color: color,
                         extendedProps: {
                             location: vevent.location,
-                            // Store the RAW ICAL TIME to preserve source timezone info
                             icalStart: vevent.startDate,
                             icalEnd: vevent.endDate,
                             description: vevent.description
@@ -275,7 +277,7 @@
             const desc = event.extendedProps.description;
             const descEl = document.getElementById('modalDesc');
             if (desc) {
-                // CHANGED: Use innerHTML to render the HTML properly
+                // Keep HTML for the modal popup so links work
                 descEl.innerHTML = desc;
                 descEl.classList.remove('hidden');
             } else {
@@ -294,23 +296,26 @@
             document.getElementById('eventModal').classList.add('hidden');
         }
 
-        function escapeICS(str) {
-            if (!str) return "";
-            return str.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
-        }
-
-        // Helper to strip HTML tags for the calendar export
+        // Helper: Strip HTML tags and decode entities for plain text export
         function cleanDescription(html) {
             if (!html) return "";
-            // 1. Replace <br> with newlines
-            let clean = html.replace(/<br\s*\/?>/gi, '\n');
-            // 2. Strip all other HTML tags
-            let tmp = document.createElement("DIV");
-            tmp.innerHTML = clean;
-            return tmp.textContent || tmp.innerText || "";
+            // Create a temporary element to let the browser decode HTML entities (like &amp;)
+            let tempDiv = document.createElement("div");
+            // Replace <br> with newlines first
+            tempDiv.innerHTML = html.replace(/<br\s*\/?>/gi, '\n');
+            // Get the plain text (this strips tags and decodes entities)
+            return tempDiv.textContent || tempDiv.innerText || "";
         }
 
-        // Helper to format ICAL.Time object to ICS string (YYYYMMDDTHHMMSS)
+        // Helper: Escape characters strict adherence to RFC 5545
+        function escapeICS(str) {
+            if (!str) return "";
+            return str.replace(/\\/g, "\\\\")
+                      .replace(/;/g, "\\;")
+                      .replace(/,/g, "\\,")
+                      .replace(/\n/g, "\\n");
+        }
+
         function formatIcalTime(icalTime) {
             const pad = (n) => n < 10 ? '0' + n : n;
             return icalTime.year + 
@@ -322,20 +327,21 @@
         }
 
         function downloadSingleEvent(calEvent) {
-            // We use the raw ICAL time objects we stored earlier
-            // This preserves the exact source time components
             const startStr = formatIcalTime(calEvent.extendedProps.icalStart);
             const endStr = formatIcalTime(calEvent.extendedProps.icalEnd);
-            
             const now = new Date().toISOString().replace(/-|:|\.\d+/g, "");
             
+            // 1. Title
             const title = escapeICS(calEvent.title);
-            // CLEAN description (strip HTML) before adding to ICS
+            
+            // 2. Description: Clean HTML -> Plain Text -> Escape for ICS
             const rawDesc = calEvent.extendedProps.description || "";
-            const description = escapeICS(cleanDescription(rawDesc));
+            const plainDesc = cleanDescription(rawDesc);
+            const description = escapeICS(plainDesc);
+            
+            // 3. Location
             const location = escapeICS(calEvent.extendedProps.location || "");
 
-            // TZID included!
             const icsContent = [
                 "BEGIN:VCALENDAR",
                 "VERSION:2.0",
