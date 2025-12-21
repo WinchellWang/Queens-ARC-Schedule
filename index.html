@@ -12,7 +12,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'media', // Uses system settings
+            darkMode: 'media', 
             theme: {
                 extend: {
                     colors: {
@@ -29,36 +29,18 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
         .fc-event { cursor: pointer; border: none; }
         
-        /* --- DARK MODE FIXES FOR FULLCALENDAR --- */
+        /* --- DARK MODE FIXES --- */
         @media (prefers-color-scheme: dark) {
-            /* 1. Header Cells (Days of Week) - Background & Text */
+            /* Fix invisible table headers */
             .fc-theme-standard th { 
-                background-color: #1e1e1e !important; /* Dark Card Color */
-                border-color: #374151 !important;     /* Dark Grey Border */
-                color: #e5e5e5 !important;            /* Light Text */
+                background-color: #1e1e1e !important; 
+                border-color: #374151 !important;     
+                color: #e5e5e5 !important;            
             }
-            
-            /* 2. Links in Header (Mon 12, etc) */
-            .fc-col-header-cell-cushion { 
-                color: #e5e5e5 !important; 
-                text-decoration: none !important; 
-            }
-
-            /* 3. Time Axis (6am, 7am...) on the left */
-            .fc-timegrid-axis {
-                background-color: #1e1e1e !important;
-                border-color: #374151 !important;
-            }
-            .fc-timegrid-slot-label-cushion {
-                color: #9ca3af !important; /* Grey text for time */
-            }
-
-            /* 4. Grid Lines */
-            .fc-theme-standard td, .fc-theme-standard .fc-scrollgrid { 
-                border-color: #374151 !important; 
-            }
-
-            /* 5. List View Fixes */
+            .fc-col-header-cell-cushion { color: #e5e5e5 !important; text-decoration: none !important; }
+            .fc-timegrid-axis { background-color: #1e1e1e !important; }
+            .fc-timegrid-slot-label-cushion { color: #9ca3af !important; }
+            .fc-theme-standard td, .fc-theme-standard .fc-scrollgrid { border-color: #374151 !important; }
             .fc-list-day-cushion { background-color: #374151 !important; color: #f3f4f6 !important; }
             .fc-list-event:hover td { background-color: #374151 !important; }
             .fc .fc-list-event-title { color: #f3f4f6 !important; }
@@ -174,7 +156,6 @@
         let allEvents = [];
         const isMobile = window.innerWidth < 768;
 
-        // Auto-set Footer Year
         document.getElementById('year').textContent = new Date().getFullYear();
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -187,9 +168,7 @@
                     center: 'title',
                     right: isMobile ? 'listWeek,timeGridDay' : 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-                buttonText: {
-                    today: 'Today' 
-                },
+                buttonText: { today: 'Today' },
                 slotMinTime: "06:00:00",
                 slotMaxTime: "23:00:00",
                 height: 'auto',
@@ -200,7 +179,6 @@
                 eventContent: function(arg) {
                     let title = arg.event.title;
                     let location = arg.event.extendedProps.location || '';
-                    
                     if (arg.view.type.startsWith('list')) {
                         let html = `
                             <div class="flex flex-col w-full py-1">
@@ -210,7 +188,6 @@
                         `;
                         return { html: html };
                     }
-                    
                     let html = `
                         <div class="fc-event-main-frame flex flex-col h-full overflow-hidden p-0.5">
                             <div class="fc-event-title-container font-bold text-xs leading-tight sticky top-0">
@@ -349,13 +326,21 @@
             applyFilters(true);
         }
 
+        // --- FIXED IOS ADD TO CALENDAR LOGIC ---
         function cleanDescription(desc) {
             if (!desc) return "";
-            // Replace <br> with new lines
-            let txt = desc.replace(/<br\s*\/?>/gi, '\\n');
-            // Remove all other HTML tags
-            txt = txt.replace(/<[^>]*>?/gm, '');
-            return txt;
+            let txt = desc.replace(/<br\s*\/?>/gi, '\\n'); // Convert <br> to newline char
+            txt = txt.replace(/<[^>]*>?/gm, ''); // Strip all other HTML
+            return txt.trim();
+        }
+
+        function escapeICS(str) {
+            if (!str) return "";
+            // STRICT ESCAPING for ICS format
+            return str.replace(/\\/g, "\\\\")
+                      .replace(/;/g, "\\;")
+                      .replace(/,/g, "\\,")
+                      .replace(/\n/g, "\\n");
         }
 
         function downloadSingleEvent(calEvent) {
@@ -368,13 +353,11 @@
                 return t.year + pad(t.month) + pad(t.day) + 'T' + pad(t.hour) + pad(t.minute) + pad(t.second);
             };
 
-            const startStr = formatIcal(start);
-            const endStr = formatIcal(end);
-
-            const title = calEvent.title.replace(/,/g, '\\,').replace(/;/g, '\\;');
-            const location = (calEvent.extendedProps.location || "").replace(/,/g, '\\,').replace(/;/g, '\\;');
+            // STRICT ESCAPING of all fields
+            const title = escapeICS(calEvent.title);
+            const location = escapeICS(calEvent.extendedProps.location || "");
             const rawDesc = calEvent.extendedProps.description || "";
-            const description = cleanDescription(rawDesc).replace(/,/g, '\\,').replace(/;/g, '\\;');
+            const description = escapeICS(cleanDescription(rawDesc));
 
             const icsContent = 
 `BEGIN:VCALENDAR
@@ -383,8 +366,8 @@ PRODID:-//Gym Schedule//EN
 BEGIN:VEVENT
 UID:${now}@gymschedule
 DTSTAMP:${now}
-DTSTART;TZID=America/Toronto:${startStr}
-DTEND;TZID=America/Toronto:${endStr}
+DTSTART;TZID=America/Toronto:${formatIcal(start)}
+DTEND;TZID=America/Toronto:${formatIcal(end)}
 SUMMARY:${title}
 DESCRIPTION:${description}
 LOCATION:${location}
@@ -394,6 +377,7 @@ END:VCALENDAR`;
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
             
             if (isIOS) {
+                // Direct navigation is the only consistent way to open "Add to Calendar" on iOS Safari
                 const uri = "data:text/calendar;charset=utf-8," + encodeURIComponent(icsContent);
                 window.location.href = uri; 
             } else {
@@ -419,6 +403,7 @@ END:VCALENDAR`;
             
             document.getElementById('modalTime').innerText = `${dateStr} • ${timeStr}`;
             
+            // Web modal shows HTML (bolding), but download function will strip it
             const desc = event.extendedProps.description;
             const descEl = document.getElementById('modalDesc');
             if (desc) {

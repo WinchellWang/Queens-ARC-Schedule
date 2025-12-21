@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About - Queen's ARC Schedule</title>
     <link rel="icon" href="https://rec.gogaelsgo.com/images/logos/site/site.png">
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -36,20 +39,9 @@
         <div class="bg-white dark:bg-darkcard rounded-xl shadow-lg p-6 md:p-10 border border-gray-100 dark:border-gray-800">
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">About This Project</h1>
             
-            <div class="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
-                <p>Welcome to the Queen's ARC Open Rec Schedule.</p>
-                
-                <h3 class="text-xl font-bold mt-4 mb-2">How it works</h3>
-                <p>This website automatically syncs with the official Queen's University ARC schedule every few hours to provide an easier mobile-friendly interface for students.</p>
-
-                <h3 class="text-xl font-bold mt-4 mb-2">Features</h3>
-                <ul class="list-disc pl-5 space-y-1">
-                    <li>Mobile optimized view</li>
-                    <li>Add specific events to your phone's calendar</li>
-                    <li>Filter by Activity and Location</li>
-                    <li>Dark mode support</li>
-                </ul>
-                </div>
+            <div id="readme-content" class="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p class="animate-pulse">Loading content...</p>
+            </div>
         </div>
     </div>
 
@@ -69,7 +61,23 @@
     </footer>
 
     <script>
+        // Set Year
         document.getElementById('year').textContent = new Date().getFullYear();
+
+        // 1. Fetch README.md
+        fetch('./README.md')
+            .then(response => {
+                if (!response.ok) throw new Error("README.md not found");
+                return response.text();
+            })
+            .then(text => {
+                // 2. Convert Markdown to HTML using Marked.js
+                document.getElementById('readme-content').innerHTML = marked.parse(text);
+            })
+            .catch(err => {
+                document.getElementById('readme-content').innerHTML = 
+                    `<p class="text-red-500">Error loading content: ${err.message}. Please ensure README.md is in the same folder.</p>`;
+            });
     </script>
 </body>
 </html>
