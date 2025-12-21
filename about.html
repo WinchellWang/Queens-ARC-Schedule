@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About - Queen's ARC Schedule</title>
-    <link rel="icon" href="https://rec.gogaelsgo.com/images/logos/site/site.png">
-    
+    <link rel="icon" href="https://pbs.twimg.com/profile_images/1837229055793344512/J8qzoD5-_400x400.jpg">
+    <link rel="apple-touch-icon" href="https://pbs.twimg.com/profile_images/1837229055793344512/J8qzoD5-_400x400.jpg">
+
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -61,17 +62,14 @@
     </footer>
 
     <script>
-        // Set Year
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        // 1. Fetch README.md
         fetch('./README.md')
             .then(response => {
                 if (!response.ok) throw new Error("README.md not found");
                 return response.text();
             })
             .then(text => {
-                // 2. Convert Markdown to HTML using Marked.js
                 document.getElementById('readme-content').innerHTML = marked.parse(text);
             })
             .catch(err => {

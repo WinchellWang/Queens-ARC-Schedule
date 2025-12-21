@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Queen's ARC">
+    
     <title>Queen's ARC Open Rec Schedule</title>
-    <link rel="icon" href="https://rec.gogaelsgo.com/images/logos/site/site.png">
+
+    <link rel="icon" href="https://pbs.twimg.com/profile_images/1837229055793344512/J8qzoD5-_400x400.jpg">
+    <link rel="apple-touch-icon" href="https://pbs.twimg.com/profile_images/1837229055793344512/J8qzoD5-_400x400.jpg">
     
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
@@ -31,7 +37,6 @@
         
         /* --- DARK MODE FIXES --- */
         @media (prefers-color-scheme: dark) {
-            /* Fix invisible table headers */
             .fc-theme-standard th { 
                 background-color: #1e1e1e !important; 
                 border-color: #374151 !important;     
@@ -46,7 +51,6 @@
             .fc .fc-list-event-title { color: #f3f4f6 !important; }
         }
         
-        /* Custom Scrollbar for Modal */
         #modalDesc::-webkit-scrollbar { width: 6px; }
         #modalDesc::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
     </style>
@@ -57,8 +61,8 @@
         
         <div class="bg-white dark:bg-darkcard rounded-xl shadow-lg p-4 md:p-6 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 border border-gray-100 dark:border-gray-800">
             <div class="flex items-center gap-4">
-                <div class="bg-white p-1 rounded-lg shadow-sm border border-gray-100">
-                    <img src="https://rec.gogaelsgo.com/images/logos/site/site.png" alt="Logo" class="w-12 h-12 object-contain">
+                <div class="bg-white p-0 rounded-full shadow-sm border border-gray-100 overflow-hidden w-12 h-12">
+                    <img src="https://pbs.twimg.com/profile_images/1837229055793344512/J8qzoD5-_400x400.jpg" alt="Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white leading-tight">Queen's ARC Open Rec</h1>
@@ -326,23 +330,25 @@
             applyFilters(true);
         }
 
-        // --- FIXED IOS ADD TO CALENDAR LOGIC ---
-        function cleanDescription(desc) {
-            if (!desc) return "";
-            let txt = desc.replace(/<br\s*\/?>/gi, '\\n'); // Convert <br> to newline char
-            txt = txt.replace(/<[^>]*>?/gm, ''); // Strip all other HTML
-            return txt.trim();
+        // --- SAFE DESCRIPTION CLEANER (DOMParser) ---
+        // This ensures the description is stripped of HTML tags properly for the calendar file
+        function cleanDescription(html) {
+            if (!html) return "";
+            // Replace <br> with newlines first so they don't disappear
+            const txt = html.replace(/<br\s*\/?>/gi, '\n');
+            const doc = new DOMParser().parseFromString(txt, 'text/html');
+            return doc.body.textContent || "";
         }
 
         function escapeICS(str) {
             if (!str) return "";
-            // STRICT ESCAPING for ICS format
             return str.replace(/\\/g, "\\\\")
                       .replace(/;/g, "\\;")
                       .replace(/,/g, "\\,")
                       .replace(/\n/g, "\\n");
         }
 
+        // --- REVERTED TO BLOB DOWNLOAD (Restored Working Method) ---
         function downloadSingleEvent(calEvent) {
             const start = calEvent.extendedProps.icalStart;
             const end = calEvent.extendedProps.icalEnd;
@@ -353,16 +359,33 @@
                 return t.year + pad(t.month) + pad(t.day) + 'T' + pad(t.hour) + pad(t.minute) + pad(t.second);
             };
 
-            // STRICT ESCAPING of all fields
             const title = escapeICS(calEvent.title);
             const location = escapeICS(calEvent.extendedProps.location || "");
             const rawDesc = calEvent.extendedProps.description || "";
             const description = escapeICS(cleanDescription(rawDesc));
 
+            // Standard ICS content (VTIMEZONE included)
             const icsContent = 
 `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Gym Schedule//EN
+BEGIN:VTIMEZONE
+TZID:America/Toronto
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0400
+TZNAME:EDT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:-0400
+TZOFFSETTO:-0500
+TZNAME:EST
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE
 BEGIN:VEVENT
 UID:${now}@gymschedule
 DTSTAMP:${now}
@@ -374,21 +397,14 @@ LOCATION:${location}
 END:VEVENT
 END:VCALENDAR`;
 
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-            
-            if (isIOS) {
-                // Direct navigation is the only consistent way to open "Add to Calendar" on iOS Safari
-                const uri = "data:text/calendar;charset=utf-8," + encodeURIComponent(icsContent);
-                window.location.href = uri; 
-            } else {
-                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.setAttribute('download', `${calEvent.title.replace(/[^a-z0-9]/gi, '_')}.ics`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
+            // Standard Blob Download
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', `${calEvent.title.replace(/[^a-z0-9]/gi, '_')}.ics`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function showModal(event) {
@@ -403,7 +419,7 @@ END:VCALENDAR`;
             
             document.getElementById('modalTime').innerText = `${dateStr} • ${timeStr}`;
             
-            // Web modal shows HTML (bolding), but download function will strip it
+            // Web modal shows HTML description
             const desc = event.extendedProps.description;
             const descEl = document.getElementById('modalDesc');
             if (desc) {
