@@ -1,0 +1,16 @@
+{
+  "name": "Queen's ARC Schedule",
+  "short_name": "ARC Schedule",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "web_logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    }
+  ]
+}
