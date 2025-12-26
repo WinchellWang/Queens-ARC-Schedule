@@ -6,11 +6,7 @@ This website automatically syncs with the official Queen's University ARC schedu
 
 Data is fetched from: [pgaskin/innosoftfusiongo-schedule](https://github.com/pgaskin/innosoftfusiongo-schedule)
 
-# Features
-- Mobile optimized view
-- Add specific events to your phone's calendar
-- Filter by Activity and Location
-- Dark mode support
+More information and features about this project can be found at: [PWA for ARC Schedule](https://winchellwang.github.io/2025/12/25/ARC_Schedule/)
 
 # Work as an APP (PWA)
 
