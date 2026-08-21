@@ -12,27 +12,11 @@
 
     <link rel="icon" href="./web_logo.jpg">
     <link rel="apple-touch-icon" href="./web_logo.jpg">
+    <script src="./assets/analytics.js"></script>
     
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
+    <link rel="stylesheet" href="./assets/styles.css">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    
-    <script>
-        tailwind.config = {
-            darkMode: 'media', 
-            theme: {
-                extend: {
-                    colors: {
-                        darkbg: '#121212',
-                        darkcard: '#1e1e1e',
-                        darktext: '#e5e5e5',
-                        queensred: '#b90e31' // Custom Queen's Red
-                    }
-                }
-            }
-        }
-    </script>
 
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -99,14 +83,6 @@
         #modalDesc::-webkit-scrollbar { width: 6px; }
         #modalDesc::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
     </style>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SM0J28NYS4"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-SM0J28NYS4');
-    </script>
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-darktext flex flex-col min-h-screen">
 
