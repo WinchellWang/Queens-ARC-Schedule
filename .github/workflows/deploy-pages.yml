@@ -28,7 +28,7 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir _site
-          cp index.html about.html manifest.json gym.ics web_logo.jpg _site/
+          cp index.html about.html README.md manifest.json gym.ics web_logo.jpg _site/
           cp -R assets _site/assets
           curl --fail --silent --show-error --retry 3 \
             "https://www.googletagmanager.com/gtag/js?id=G-SM0J28NYS4" \
