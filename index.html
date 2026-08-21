@@ -215,18 +215,18 @@
                 navLinks: false,
                 
                 eventContent: function(arg) {
-                    let title = arg.event.title;
-                    let location = arg.event.extendedProps.location || '';
+                    const title = arg.event.title;
+                    const location = arg.event.extendedProps.location || '';
                     if (arg.view.type.startsWith('list')) {
-                        let html = `
+                        const html = `
                             <div class="flex flex-col w-full py-1">
                                 <div class="font-bold text-gray-900 dark:text-white text-sm">${title}</div>
                                 ${location ? `<div class="text-xs text-blue-600 dark:text-blue-400 mt-0.5">📍 ${location}</div>` : ''}
                             </div>
                         `;
-                        return { html: html };
+                        return { html };
                     }
-                    let html = `
+                    const html = `
                         <div class="fc-event-main-frame flex flex-col h-full overflow-hidden p-0.5">
                             <div class="fc-event-title-container font-bold text-xs leading-tight sticky top-0">
                                 ${title}
@@ -234,7 +234,7 @@
                             ${location ? `<div class="text-[10px] italic mt-0.5 opacity-90 truncate">📍${location}</div>` : ''}
                         </div>
                     `;
-                    return { html: html };
+                    return { html };
                 },
 
                 eventClick: function(info) {
@@ -276,7 +276,7 @@
                     const vevent = new ICAL.Event(event);
                     if (!vevent.location || vevent.location.trim() === "") { return; }
 
-                    let color = '#ea580c'; // Default Orange
+                    let color = '#ea580c';
                     const summaryLower = vevent.summary.toLowerCase();
                     
                     if(summaryLower.includes('basketball')) color = '#f59e0b';
@@ -294,9 +294,7 @@
                         title: vevent.summary,
                         start: vevent.startDate.toString(),
                         end: vevent.endDate.toString(),
-                        description: vevent.description,
-                        location: vevent.location,
-                        color: color,
+                        color,
                         extendedProps: {
                             location: vevent.location,
                             icalStart: vevent.startDate,
@@ -329,13 +327,13 @@
             const savedLoc = localStorage.getItem('gym_location');
 
             Array.from(activitySet).sort().forEach(act => {
-                let opt = document.createElement('option');
+                const opt = document.createElement('option');
                 opt.value = act; opt.innerText = act; 
                 if (savedAct === act) opt.selected = true; 
                 actSelect.appendChild(opt);
             });
             Array.from(locationSet).sort().forEach(loc => {
-                let opt = document.createElement('option');
+                const opt = document.createElement('option');
                 opt.value = loc; opt.innerText = loc; 
                 if (savedLoc === loc) opt.selected = true; 
                 locSelect.appendChild(opt);
@@ -367,7 +365,7 @@
             document.getElementById('locationFilter').value = 'all';
             localStorage.removeItem('gym_activity');
             localStorage.removeItem('gym_location');
-            applyFilters(true);
+            applyFilters();
         }
 
         function cleanDescription(html) {
@@ -390,11 +388,10 @@
             const end = calEvent.extendedProps.icalEnd;
             const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
 
-            const pad = n => n < 10 ? '0' + n : '' + n;
+            const pad = number => String(number).padStart(2, '0');
 
-            const formatIcal = (t) => {
-                return t.year + pad(t.month) + pad(t.day) + 'T' + pad(t.hour) + pad(t.minute) + pad(t.second);
-            };
+            const formatIcal = time =>
+                `${time.year}${pad(time.month)}${pad(time.day)}T${pad(time.hour)}${pad(time.minute)}${pad(time.second)}`;
 
             const title = escapeICS(calEvent.title);
             const location = escapeICS(calEvent.extendedProps.location || "");
@@ -442,8 +439,6 @@ END:VCALENDAR`;
             document.body.removeChild(link);
         }
 
-        // --- SCROLL LOCKING FOR IOS ---
-        // This stops the background page from scrolling when the modal is open
         let scrollPosition = 0;
         function lockScroll() {
             scrollPosition = window.scrollY;
