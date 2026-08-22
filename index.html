@@ -114,22 +114,25 @@
       .header-actions {
         display: flex;
         align-items: center;
-        gap: 3px;
+        gap: 10px;
       }
       .action-link {
-        min-height: 36px;
+        width: 88px;
+        min-height: 38px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border-radius: 9px;
+        border: 2px solid transparent;
+        border-radius: 10px;
         text-decoration: none;
         font-weight: 700;
         font-size: 14px;
-        padding: 7px 8px;
+        padding: 7px 10px;
       }
       .github {
         gap: 4px;
         background: #24292e;
+        border-color: #24292e;
         color: #fff;
       }
       .github svg {
@@ -137,13 +140,9 @@
         height: 17px;
       }
       .about {
-        min-height: 38px;
-        padding: 7px 12px;
         color: #fff;
         background: var(--blue);
-        border: 2px solid var(--blue);
-        border-radius: 10px;
-        font-size: 14px;
+        border-color: var(--blue);
       }
       main {
         width: 100%;
@@ -759,28 +758,19 @@
         return new File(
           [content],
           `${event.title.replace(/[^a-z0-9_-]+/gi, "_") || "ARC_event"}.ics`,
-          { type: "text/calendar" },
+          { type: "text/calendar;charset=utf-8" },
         );
       }
-      async function addToCalendar() {
+      function addToCalendar() {
         if (!selectedEvent) return;
         const file = makeCalendarFile(selectedEvent);
-        if (navigator.share && navigator.canShare?.({ files: [file] })) {
-          try {
-            await navigator.share({
-              title: selectedEvent.title,
-              files: [file],
-            });
-            return;
-          } catch (error) {
-            if (error.name === "AbortError") return;
-          }
-        }
-        const url = URL.createObjectURL(file),
-          link = document.createElement("a");
+        const url = URL.createObjectURL(file);
+        const link = document.createElement("a");
         link.href = url;
-        link.target = "_self";
+        link.download = file.name;
+        document.body.appendChild(link);
         link.click();
+        link.remove();
         setTimeout(() => URL.revokeObjectURL(url), 60000);
       }
       function showModal(event) {
