@@ -22,6 +22,29 @@ For Android:
 2. Tap the three-dot menu in the top-right corner.
 3. Select "Add to Home screen". 
 
+# Run locally with Docker
+
+Build and start the static site with Docker Compose:
+
+```bash
+docker compose up --build -d
+```
+
+Open <http://localhost:8080> in a browser.
+
+After changing the website files, rebuild the image and recreate the container:
+
+```bash
+docker compose up --build -d --force-recreate
+```
+
+To stop the site:
+
+```bash
+docker compose down
+```
+
+
 # Contribution
 
 This project is open source, and created by a Ph.D student from Civil Engineering at Queen's University. If you find any issues or have suggestions for improvements, feel free to open an issue or submit a pull request on the GitHub repository.

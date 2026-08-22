@@ -1,484 +1,835 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Queen's ARC">
-    <link rel="manifest" href="manifest.json">
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="./web_logo.jpg" />
+    <link rel="apple-touch-icon" href="./web_logo.jpg" />
     <title>Queen's ARC Schedule</title>
-
-    <link rel="icon" href="./web_logo.jpg">
-    <link rel="apple-touch-icon" href="./web_logo.jpg">
     <script src="./assets/analytics.js"></script>
-    
-    <link rel="stylesheet" href="./assets/styles.css">
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
     <script src="./assets/ical.min.js"></script>
-
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-        .fc-event { cursor: pointer; border: none; }
+      :root {
+        color-scheme: light dark;
+        --blue: #0a84ff;
+        --ink: #172033;
+        --muted: #667085;
+        --line: #d9dde5;
+        --panel: #fff;
+        --page: #f3f4f6;
+        --top: #d9d9dc;
+        --day-heading-bg: #eef2f6;
+        --day-heading-text: #344054;
+        --day-heading-border: #d6dce5;
+      }
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        min-height: 100%;
+        overscroll-behavior: none;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--page);
+        color: var(--ink);
+      }
+      button,
+      select,
+      a {
+        font: inherit;
+        touch-action: manipulation;
+      }
+      button,
+      .action-link {
+        transition:
+          transform 0.12s,
+          filter 0.12s,
+          background-color 0.12s,
+          box-shadow 0.12s;
+      }
+      button:hover,
+      .action-link:hover {
+        filter: brightness(0.94);
+      }
+      button:active,
+      .action-link:active {
+        transform: scale(0.96);
+        filter: brightness(0.84);
+      }
+      button:focus-visible,
+      select:focus-visible,
+      a:focus-visible {
+        outline: 3px solid rgba(10, 132, 255, 0.38);
+        outline-offset: 2px;
+      }
+      button:disabled {
+        opacity: 0.28;
+        cursor: not-allowed;
+        transform: none;
+        filter: none;
+      }
+      .site-header {
+        width: 100%;
+        background: var(--top);
+        padding: max(8px, env(safe-area-inset-top))
+          max(10px, env(safe-area-inset-right)) 8px
+          max(10px, env(safe-area-inset-left));
+      }
+      .header-inner {
+        max-width: 1194px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 8px;
+      }
+      .brand h1 {
+        margin: 0;
+        font-size: clamp(19px, 4.8vw, 34px);
+        line-height: 1.05;
+        letter-spacing: -0.035em;
+        white-space: nowrap;
+      }
+      .brand p {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: clamp(10px, 2.4vw, 15px);
+        white-space: nowrap;
+      }
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+      .action-link {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+        padding: 7px 8px;
+      }
+      .github {
+        gap: 4px;
+        background: #24292e;
+        color: #fff;
+      }
+      .github svg {
+        width: 17px;
+        height: 17px;
+      }
+      .about {
+        min-height: 38px;
+        padding: 7px 12px;
+        color: #fff;
+        background: var(--blue);
+        border: 2px solid var(--blue);
+        border-radius: 10px;
+        font-size: 14px;
+      }
+      main {
+        width: 100%;
+        max-width: 1194px;
+        margin: 0 auto;
+        padding: 4px;
+      }
+      .filters {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 4px;
+        margin-bottom: 4px;
+      }
+      .filter-field {
+        display: grid;
+        grid-template-columns: 70px minmax(0, 1fr);
+        align-items: center;
+        gap: 5px;
+      }
+      .filter-field label {
+        font-size: 14px;
+        font-weight: 700;
+      }
+      select {
+        width: 100%;
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        color: inherit;
+        padding: 5px 30px 5px 8px;
+      }
+      .calendar-shell {
+        width: 100%;
+        background: var(--panel);
+        padding: 4px;
+      }
+      .fc {
+        font-size: 13px;
+      }
+      .fc .fc-toolbar.fc-header-toolbar {
+        margin: 0 0 4px;
+        gap: 4px;
+      }
+      .fc .fc-toolbar-title {
+        font-size: clamp(16px, 4.6vw, 25px);
+        line-height: 1.1;
+        text-align: center;
+      }
+      .fc .fc-button {
+        min-width: 34px;
+        min-height: 34px;
+        padding: 4px 8px;
+        border: 0;
+        border-radius: 7px;
+        background: #30445a;
+        box-shadow: none;
+      }
+      .fc .fc-thisWeek-button,
+      .fc .fc-nextWeek-button {
+        background: #2563eb;
+        opacity: 1;
+        font-weight: 700;
+        white-space: nowrap;
+      }
 
-        /* Avoid Firefox warnings from FullCalendar's embedded legacy icon font. */
-        .fc .fc-icon { font-family: inherit !important; }
-        .fc .fc-icon-chevron-left::before { content: "\2039"; }
-        .fc .fc-icon-chevron-right::before { content: "\203a"; }
-        
-        /* --- MOBILE OPTIMIZATIONS --- */
-        @media (max-width: 768px) {
-            .fc-toolbar-title { 
-                font-size: 1.1rem !important; 
-                font-weight: 700 !important;
-            }
-            .fc .fc-button { 
-                padding: 0.3em 0.5em !important; 
-                font-size: 0.85em !important; 
-            }
-            .fc-toolbar-chunk {
-                display: flex;
-                align-items: center;
-            }
+      .fc .fc-thisWeek-button:disabled,
+      .fc .fc-nextWeek-button:disabled {
+        background: #98a2b3;
+        color: #f8fafc;
+        opacity: 0.48;
+      }
+      .fc .fc-icon {
+        font-family: inherit !important;
+      }
+      .fc .fc-icon-chevron-left:before {
+        content: "‹";
+      }
+      .fc .fc-icon-chevron-right:before {
+        content: "›";
+      }
+      .fc-event {
+        cursor: pointer;
+        border: 0;
+      }
+      .fc-list {
+        border-left: 0 !important;
+        border-right: 0 !important;
+      }
+      .fc-list-day-cushion {
+        padding: 5px 7px !important;
+        background: var(--day-heading-bg) !important;
+        color: var(--day-heading-text) !important;
+        border-top: 1px solid var(--day-heading-border);
+        border-bottom: 1px solid var(--day-heading-border);
+      }
+      .fc-list-day-cushion a,
+      .fc-list-day-text,
+      .fc-list-day-side-text {
+        color: var(--day-heading-text) !important;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .fc-list-event td {
+        padding: 6px 5px !important;
+      }
+      .fc-list-event:hover td,
+      .fc-list-event:active td {
+        background: #b90e31 !important;
+        color: #fff !important;
+      }
+      .fc-list-event:hover a,
+      .fc-list-event:active a,
+      .fc-list-event:hover .event-location,
+      .fc-list-event:active .event-location {
+        color: #fff !important;
+      }
+      .event-title {
+        font-weight: 750;
+        line-height: 1.2;
+      }
+      .event-location {
+        margin-top: 2px;
+        color: #2563eb;
+        font-size: 11px;
+      }
+      .modal {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: grid;
+        place-items: center;
+        padding: 12px;
+      }
+      .modal[hidden] {
+        display: none;
+      }
+      .modal-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(8, 15, 28, 0.56);
+        backdrop-filter: blur(3px);
+      }
+      .modal-card {
+        position: relative;
+        width: min(92vw, 520px);
+        max-height: min(82dvh, 620px);
+        overflow: auto;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+        padding: 18px;
+      }
+      .modal-card h2 {
+        margin: 0 0 14px;
+        font-size: 23px;
+        line-height: 1.15;
+      }
+      .detail {
+        display: grid;
+        grid-template-columns: 32px 1fr;
+        gap: 10px;
+        margin: 10px 0;
+        align-items: start;
+      }
+      .detail-icon {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        background: #e8f2ff;
+        color: #076bd3;
+      }
+      .detail small {
+        display: block;
+        color: var(--muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .detail p {
+        margin: 2px 0 0;
+        line-height: 1.35;
+      }
+      .description {
+        margin: 12px 0;
+        padding: 10px;
+        border-radius: 10px;
+        background: var(--page);
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .add-button {
+        width: 100%;
+        min-height: 50px;
+        margin-top: 15px;
+        border: 0;
+        border-radius: 12px;
+        background: #087df0;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 800;
+      }
+      @media (orientation: portrait) {
+        .calendar-shell {
+          margin-left: -4px;
+          width: calc(100% + 8px);
         }
-
-        /* --- HOVER EFFECT (QUEEN'S RED) --- */
-        /* Applies to both Hover (Desktop) and Active/Touch (Mobile) */
-        .fc-list-event:hover td,
-        .fc-list-event:active td {
-            background-color: #b90e31 !important; /* Queen's Red */
-            cursor: pointer;
-            transition: background-color 0.1s ease;
+        .fc .fc-toolbar {
+          flex-wrap: nowrap;
         }
-
-        /* Ensure Text turns White on Hover for readability */
-        .fc-list-event:hover .fc-list-event-title,
-        .fc-list-event:active .fc-list-event-title,
-        .fc-list-event:hover .fc-list-event-time,
-        .fc-list-event:active .fc-list-event-time {
-            color: #ffffff !important;
+        .fc .fc-toolbar-chunk {
+          display: flex;
+          align-items: center;
         }
-
-        /* Ensure the colored "Dot" turns white on hover so it doesn't clash */
-        .fc-list-event:hover .fc-list-event-dot,
-        .fc-list-event:active .fc-list-event-dot {
-            border-color: #ffffff !important;
+        .fc .fc-toolbar-chunk:nth-child(2) {
+          min-width: 0;
         }
-
-        /* --- DARK MODE FIXES --- */
-        @media (prefers-color-scheme: dark) {
-            .fc-theme-standard th { 
-                background-color: #1e1e1e !important; 
-                border-color: #374151 !important;     
-                color: #e5e5e5 !important;            
-            }
-            .fc-col-header-cell-cushion { color: #e5e5e5 !important; text-decoration: none !important; }
-            .fc-timegrid-axis { background-color: #1e1e1e !important; }
-            .fc-timegrid-slot-label-cushion { color: #9ca3af !important; }
-            .fc-theme-standard td, .fc-theme-standard .fc-scrollgrid { border-color: #374151 !important; }
-            
-            /* List View Dark Mode Base */
-            .fc-list-day-cushion { background-color: #374151 !important; color: #f3f4f6 !important; }
-            .fc-list-event:hover td { background-color: #b90e31 !important; } /* Ensure Red overrides dark grey */
-            
-            .fc .fc-list-event-title { color: #f3f4f6 !important; }
+        .fc .fc-toolbar-title {
+          white-space: normal;
         }
-        
-        #modalDesc::-webkit-scrollbar { width: 6px; }
-        #modalDesc::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+      }
+      @media (orientation: landscape) and (min-width: 700px) {
+        html,
+        body {
+          height: 100%;
+          overflow: hidden;
+        }
+        body {
+          display: flex;
+          flex-direction: column;
+        }
+        .site-header {
+          flex: 0 0 auto;
+          padding-top: max(6px, env(safe-area-inset-top));
+          padding-bottom: 6px;
+        }
+        .brand h1 {
+          font-size: 26px;
+        }
+        .brand p {
+          font-size: 13px;
+        }
+        main {
+          min-height: 0;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          padding: 3px 5px 5px;
+        }
+        .filters {
+          grid-template-columns: 1fr 1fr;
+          flex: 0 0 auto;
+        }
+        .filter-field {
+          grid-template-columns: 64px minmax(0, 1fr);
+        }
+        .calendar-shell {
+          min-height: 0;
+          flex: 1;
+          overflow: hidden;
+        }
+        #calendar,
+        .fc {
+          height: 100%;
+        }
+        .fc .fc-toolbar-title {
+          font-size: 20px;
+        }
+        .fc .fc-timegrid-slot {
+          height: 1.25em;
+        }
+        .fc .fc-col-header-cell-cushion {
+          padding: 2px 4px;
+        }
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --ink: #f1f3f7;
+          --muted: #aeb5c2;
+          --line: #3b4250;
+          --panel: #1e1f22;
+          --page: #111214;
+          --top: #303135;
+          --day-heading-bg: #2a2e35;
+          --day-heading-text: #e6eaf0;
+          --day-heading-border: #444b57;
+        }
+        .detail-icon {
+          background: #18344e;
+          color: #75baff;
+        }
+        .fc-theme-standard td,
+        .fc-theme-standard th,
+        .fc-theme-standard .fc-scrollgrid {
+          border-color: var(--line) !important;
+        }
+      }
     </style>
-</head>
-<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-darktext flex flex-col min-h-screen">
-
-    <div class="flex-grow max-w-7xl mx-auto w-full p-2 md:p-6">
-        
-        <div class="relative bg-white dark:bg-darkcard rounded-xl shadow-lg p-4 md:p-6 mb-6 min-h-32 border border-gray-100 dark:border-gray-800">
-            <div class="flex items-center gap-4 pr-20 pb-14 md:pr-0 md:pb-0">
-                <div class="bg-white p-0 rounded-2xl shadow-sm border border-gray-100 overflow-hidden w-12 h-12 flex-shrink-0">
-                    <img src="./web_logo.jpg" alt="Logo" class="w-full h-full object-cover">
-                </div>
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white leading-tight">Queen's ARC Schedule</h1>
-                    <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-1">Tap an event to add to calendar</p>
-                </div>
-            </div>
-
-            <a href="about.html" class="absolute top-4 right-4 md:top-6 md:right-6 text-blue-600 dark:text-blue-400 hover:underline font-semibold">About</a>
-
-            <a href="https://github.com/WinchellWang/Queens-ARC-Schedule" target="_blank" rel="noopener noreferrer" class="absolute bottom-4 right-4 md:bottom-6 md:right-6 inline-flex items-center gap-2 bg-[#24292e] hover:bg-[#2f363d] text-white px-4 py-2 rounded-md font-semibold text-sm transition shadow-sm">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/></svg>
-                Star
-            </a>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="brand">
+          <h1>Queen's ARC Schedule</h1>
+          <p>Tap an event to add to calendar</p>
         </div>
-
-        <div class="bg-white dark:bg-darkcard rounded-xl shadow-lg p-4 mb-6 border border-gray-100 dark:border-gray-800">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                <div class="md:col-span-1">
-                    <select id="activityFilter" onchange="applyFilters(true)" class="block w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white py-2.5 px-4 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                        <option value="all">Activity (All)</option>
-                    </select>
-                </div>
-                <div class="md:col-span-1">
-                    <select id="locationFilter" onchange="applyFilters(true)" class="block w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white py-2.5 px-4 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                        <option value="all">Location (All)</option>
-                    </select>
-                </div>
-                
-                <button onclick="resetFilters()" class="md:col-span-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold py-2.5 px-4 rounded-lg transition">
-                    Reset Filters
-                </button>
-                <button onclick="goToToday()" class="md:col-span-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg shadow transition flex justify-center items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    Go to Today
-                </button>
-            </div>
+        <nav class="header-actions" aria-label="Project links">
+          <a
+            class="action-link github"
+            href="https://github.com/WinchellWang/Queens-ARC-Schedule"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill-rule="evenodd"
+                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 17.522 12z"
+                clip-rule="evenodd"
+              /></svg
+            >Star</a
+          ><a class="action-link about" href="about.html">About</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="filters" aria-label="Schedule filters">
+        <div class="filter-field">
+          <label for="activityFilter">Activity</label
+          ><select id="activityFilter">
+            <option value="all">All</option>
+          </select>
         </div>
-
-        <div class="bg-white dark:bg-darkcard rounded-xl shadow-lg p-2 md:p-6 border border-gray-100 dark:border-gray-800">
-            <div id='calendar'></div>
+        <div class="filter-field">
+          <label for="locationFilter">Location</label
+          ><select id="locationFilter">
+            <option value="all">All</option>
+          </select>
         </div>
+      </section>
+      <section class="calendar-shell" aria-label="Two-week activity schedule">
+        <div id="calendar"></div>
+      </section>
+    </main>
+    <div
+      id="eventModal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modalTitle"
+      hidden
+    >
+      <div class="modal-backdrop" data-close-modal></div>
+      <article class="modal-card">
+        <h2 id="modalTitle"></h2>
+        <div class="detail">
+          <span class="detail-icon">⌖</span>
+          <div>
+            <small>Location</small>
+            <p id="locText"></p>
+          </div>
+        </div>
+        <div class="detail">
+          <span class="detail-icon">◷</span>
+          <div>
+            <small>Time</small>
+            <p id="modalTime"></p>
+          </div>
+        </div>
+        <div id="modalDesc" class="description" hidden></div>
+        <button id="addToCalBtn" class="add-button" type="button">
+          Add to Calendar
+        </button>
+      </article>
     </div>
-
-    <div id="eventModal" class="fixed inset-0 z-50 flex items-end md:items-center justify-center pointer-events-none hidden">
-        <div class="absolute inset-0 bg-black bg-opacity-60 pointer-events-auto transition-opacity backdrop-blur-sm" onclick="closeModal()"></div>
-        <div class="bg-white dark:bg-darkcard w-full md:w-96 md:rounded-2xl rounded-t-2xl p-6 pointer-events-auto shadow-2xl transform transition-transform duration-300 ease-out border border-gray-200 dark:border-gray-700">
-            <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-6 md:hidden"></div>
-            
-            <h3 id="modalTitle" class="text-xl font-extrabold text-gray-900 dark:text-white mb-2 leading-tight"></h3>
-            
-            <div class="space-y-4 mb-6">
-                <div class="flex items-start">
-                    <div class="bg-blue-50 dark:bg-gray-700 p-2 rounded-lg mr-3">
-                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wide">Location</p>
-                        <p id="locText" class="text-gray-800 dark:text-gray-200 font-medium text-sm"></p>
-                    </div>
-                </div>
-
-                <div class="flex items-start">
-                    <div class="bg-green-50 dark:bg-gray-700 p-2 rounded-lg mr-3">
-                        <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wide">Time</p>
-                        <p id="modalTime" class="text-gray-800 dark:text-gray-200 font-medium text-sm"></p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="modalDesc" class="text-sm text-gray-600 dark:text-gray-300 mb-6 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg max-h-32 overflow-y-auto hidden break-words border border-gray-100 dark:border-gray-700"></div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="closeModal()" class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-white font-bold py-3 px-4 rounded-xl transition">Close</button>
-                <button id="addToCalBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition flex justify-center items-center">
-                    Add to Calendar
-                </button>
-            </div>
-            <div class="h-4 md:hidden"></div>
-        </div>
-    </div>
-
     <script>
-        let calendar;
-        let allEvents = [];
-        const isMobile = window.innerWidth < 768;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const calendarEl = document.getElementById('calendar');
-            
-            calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: isMobile ? 'listWeek' : 'timeGridWeek',
-                headerToolbar: {
-                    left: 'prev,next',
-                    center: 'title',
-                    right: isMobile ? 'listWeek,timeGridDay' : 'dayGridMonth,timeGridWeek,timeGridDay'
+      let calendar,
+        selectedEvent = null,
+        scrollPosition = 0,
+        allEvents = [];
+      const portraitQuery = matchMedia("(orientation: portrait)");
+      const startOfWeek = (date) => {
+        const value = new Date(date),
+          day = value.getDay();
+        value.setHours(0, 0, 0, 0);
+        value.setDate(value.getDate() - day);
+        return value;
+      };
+      const rangeStart = startOfWeek(new Date()),
+        rangeEnd = new Date(rangeStart);
+      rangeEnd.setDate(rangeEnd.getDate() + 14);
+      document.addEventListener("DOMContentLoaded", () => {
+        calendar = new FullCalendar.Calendar(
+          document.getElementById("calendar"),
+          {
+            initialView: portraitQuery.matches ? "listWeek" : "timeGridWeek",
+            initialDate: new Date(),
+            validRange: { start: rangeStart, end: rangeEnd },
+            headerToolbar: {
+              left: "thisWeek",
+              center: "title",
+              right: "nextWeek",
+            },
+            customButtons: {
+              thisWeek: {
+                text: "This Week",
+                click: () => calendar.gotoDate(rangeStart),
+              },
+              nextWeek: {
+                text: "Next Week",
+                click: () => {
+                  const nextWeekStart = new Date(rangeStart);
+                  nextWeekStart.setDate(nextWeekStart.getDate() + 7);
+                  calendar.gotoDate(nextWeekStart);
                 },
-                buttonText: { today: 'Today' },
-                slotMinTime: "06:00:00",
-                slotMaxTime: "23:00:00",
-                height: 'auto',
-                nowIndicator: true,
-                allDaySlot: false,
-                navLinks: false,
-                
-                eventContent: function(arg) {
-                    const title = arg.event.title;
-                    const location = arg.event.extendedProps.location || '';
-                    if (arg.view.type.startsWith('list')) {
-                        const html = `
-                            <div class="flex flex-col w-full py-1">
-                                <div class="font-bold text-gray-900 dark:text-white text-sm">${title}</div>
-                                ${location ? `<div class="text-xs text-blue-600 dark:text-blue-400 mt-0.5">📍 ${location}</div>` : ''}
-                            </div>
-                        `;
-                        return { html };
-                    }
-                    const html = `
-                        <div class="fc-event-main-frame flex flex-col h-full overflow-hidden p-0.5">
-                            <div class="fc-event-title-container font-bold text-xs leading-tight sticky top-0">
-                                ${title}
-                            </div>
-                            ${location ? `<div class="text-[10px] italic mt-0.5 opacity-90 truncate">📍${location}</div>` : ''}
-                        </div>
-                    `;
-                    return { html };
-                },
-
-                eventClick: function(info) {
-                    info.jsEvent.preventDefault();
-                    showModal(info.event);
-                }
-            });
-
-            calendar.render();
-            fetchAndParseICS();
+              },
+            },
+            firstDay: 0,
+            slotMinTime: "06:00:00",
+            slotMaxTime: "23:00:00",
+            height: portraitQuery.matches ? "auto" : "100%",
+            expandRows: true,
+            nowIndicator: true,
+            allDaySlot: false,
+            navLinks: false,
+            eventContent: renderEvent,
+            eventClick: (info) => {
+              info.jsEvent.preventDefault();
+              showModal(info.event);
+            },
+            datesSet: updateNavigationState,
+          },
+        );
+        calendar.render();
+        activityFilter.addEventListener("change", () => applyFilters(true));
+        locationFilter.addEventListener("change", () => applyFilters(true));
+        document
+          .querySelector("[data-close-modal]")
+          .addEventListener("click", closeModal);
+        addToCalBtn.addEventListener("click", addToCalendar);
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") closeModal();
         });
+        portraitQuery.addEventListener("change", (event) => {
+          calendar.setOption("height", event.matches ? "auto" : "100%");
+          calendar.changeView(event.matches ? "listWeek" : "timeGridWeek");
+          calendar.updateSize();
+        });
+        preventGestureZoom();
+        fetchAndParseICS();
+      });
+      function updateNavigationState(info) {
+        requestAnimationFrame(() => {
+          const thisWeekButton = document.querySelector(
+            ".fc-thisWeek-button",
+          );
+          const nextWeekButton = document.querySelector(
+            ".fc-nextWeek-button",
+          );
+          const isThisWeek = info.start.getTime() === rangeStart.getTime();
 
-        function goToToday() {
-            calendar.today();
+          if (thisWeekButton) thisWeekButton.disabled = isThisWeek;
+          if (nextWeekButton) nextWeekButton.disabled = !isThisWeek;
+        });
+      }
+      function renderEvent(arg) {
+        const wrap = document.createElement("div"),
+          title = document.createElement("div");
+        title.className = "event-title";
+        title.textContent = arg.event.title;
+        wrap.appendChild(title);
+        const location = arg.event.extendedProps.location;
+        if (location) {
+          const loc = document.createElement("div");
+          loc.className = "event-location";
+          loc.textContent = `⌖ ${location}`;
+          wrap.appendChild(loc);
         }
-
-        async function fetchAndParseICS() {
-            try {
-                const response = await fetch('./gym.ics');
-                if (!response.ok) throw new Error("File not found");
-                const icsData = await response.text();
-                parseICS(icsData);
-            } catch (error) {
-                console.error("Error:", error);
-            }
+        return { domNodes: [wrap] };
+      }
+      async function fetchAndParseICS() {
+        try {
+          const response = await fetch("./gym.ics");
+          if (!response.ok) throw new Error("Schedule file not found");
+          parseICS(await response.text());
+        } catch (error) {
+          console.error("Could not load schedule:", error);
         }
-
-        function parseICS(icsData) {
-            try {
-                const jcalData = ICAL.parse(icsData);
-                const comp = new ICAL.Component(jcalData);
-                const events = comp.getAllSubcomponents('vevent');
-                allEvents = [];
-
-                events.forEach(event => {
-                    const status = event.getFirstPropertyValue('status');
-                    if (status && status.toUpperCase() === 'CANCELLED') { return; }
-                    
-                    const vevent = new ICAL.Event(event);
-                    if (!vevent.location || vevent.location.trim() === "") { return; }
-
-                    let color = '#ea580c';
-                    const summaryLower = vevent.summary.toLowerCase();
-                    
-                    if(summaryLower.includes('basketball')) color = '#f59e0b';
-                    if(summaryLower.includes('badminton')) color = '#ea580c';
-                    if(summaryLower.includes('pickleball')) color = '#9333ea';
-                    if(summaryLower.includes('volleyball')) color = '#0d9488';
-                    if(summaryLower.includes('futsal') || summaryLower.includes('soccer')) color = '#be123c';
-                    if(summaryLower.includes('spikeball')) color = '#84cc16';
-                    if(summaryLower.includes('yoga') || summaryLower.includes('pilates')) color = '#16a34a';
-                    if(summaryLower.includes('swim') || summaryLower.includes('pool') || summaryLower.includes('aquafit')) color = '#0284c7';
-                    if(summaryLower.includes('zumba') || summaryLower.includes('dance')) color = '#db2777';
-                    if(summaryLower.includes('barre')) color = '#7c3aed';
-
-                    allEvents.push({
-                        title: vevent.summary,
-                        start: vevent.startDate.toString(),
-                        end: vevent.endDate.toString(),
-                        color,
-                        extendedProps: {
-                            location: vevent.location,
-                            icalStart: vevent.startDate,
-                            icalEnd: vevent.endDate,
-                            description: vevent.description
-                        }
-                    });
-                });
-
-                populateDropdowns();
-                applyFilters(false);
-            } catch (e) { console.error(e); }
+      }
+      function parseICS(data) {
+        try {
+          const component = new ICAL.Component(ICAL.parse(data));
+          allEvents = component
+            .getAllSubcomponents("vevent")
+            .flatMap((raw) => {
+              const status = raw.getFirstPropertyValue("status"),
+                event = new ICAL.Event(raw);
+              if (
+                (status && status.toUpperCase() === "CANCELLED") ||
+                !event.location?.trim()
+              )
+                return [];
+              const summary = event.summary || "Untitled activity",
+                lower = summary.toLowerCase();
+              let color = "#ea580c";
+              if (lower.includes("basketball")) color = "#f59e0b";
+              if (lower.includes("pickleball")) color = "#9333ea";
+              if (lower.includes("volleyball")) color = "#0d9488";
+              if (lower.includes("futsal") || lower.includes("soccer"))
+                color = "#be123c";
+              if (lower.includes("spikeball")) color = "#84cc16";
+              if (lower.includes("yoga") || lower.includes("pilates"))
+                color = "#16a34a";
+              if (
+                lower.includes("swim") ||
+                lower.includes("pool") ||
+                lower.includes("aquafit")
+              )
+                color = "#0284c7";
+              if (lower.includes("zumba") || lower.includes("dance"))
+                color = "#db2777";
+              if (lower.includes("barre")) color = "#7c3aed";
+              return [
+                {
+                  title: summary,
+                  start: event.startDate.toString(),
+                  end: event.endDate.toString(),
+                  color,
+                  extendedProps: {
+                    location: event.location,
+                    icalStart: event.startDate,
+                    icalEnd: event.endDate,
+                    description: event.description || "",
+                  },
+                },
+              ];
+            })
+            .filter(
+              (item) =>
+                new Date(item.start) < rangeEnd &&
+                new Date(item.end) >= rangeStart,
+            );
+          populateDropdowns();
+          applyFilters(false);
+        } catch (error) {
+          console.error("Could not parse schedule:", error);
         }
-
-        function populateDropdowns() {
-            const activitySet = new Set();
-            const locationSet = new Set();
-            allEvents.forEach(e => {
-                if (e.title) activitySet.add(e.title);
-                if (e.extendedProps.location) locationSet.add(e.extendedProps.location);
+      }
+      function populateDropdowns() {
+        activityFilter.innerHTML = '<option value="all">All</option>';
+        locationFilter.innerHTML = '<option value="all">All</option>';
+        const add = (select, values) =>
+          [...values]
+            .sort()
+            .forEach((value) => select.add(new Option(value, value)));
+        add(
+          activityFilter,
+          new Set(allEvents.map((e) => e.title).filter(Boolean)),
+        );
+        add(
+          locationFilter,
+          new Set(
+            allEvents.map((e) => e.extendedProps.location).filter(Boolean),
+          ),
+        );
+        const a = localStorage.getItem("gym_activity"),
+          l = localStorage.getItem("gym_location");
+        if ([...activityFilter.options].some((o) => o.value === a))
+          activityFilter.value = a;
+        if ([...locationFilter.options].some((o) => o.value === l))
+          locationFilter.value = l;
+      }
+      function applyFilters(save) {
+        const a = activityFilter.value,
+          l = locationFilter.value;
+        if (save) {
+          localStorage.setItem("gym_activity", a);
+          localStorage.setItem("gym_location", l);
+        }
+        calendar.removeAllEvents();
+        calendar.addEventSource(
+          allEvents.filter(
+            (e) =>
+              (a === "all" || e.title === a) &&
+              (l === "all" || e.extendedProps.location === l),
+          ),
+        );
+      }
+      function cleanDescription(value) {
+        const doc = new DOMParser().parseFromString(
+          String(value || "").replace(/<br\s*\/?>/gi, "\n"),
+          "text/html",
+        );
+        return doc.body.textContent || "";
+      }
+      function escapeICS(value) {
+        return String(value || "")
+          .replace(/\\/g, "\\\\")
+          .replace(/;/g, "\\;")
+          .replace(/,/g, "\\,")
+          .replace(/\n/g, "\\n");
+      }
+      const pad = (value) => String(value).padStart(2, "0"),
+        formatIcal = (time) =>
+          `${time.year}${pad(time.month)}${pad(time.day)}T${pad(time.hour)}${pad(time.minute)}${pad(time.second)}`;
+      function makeCalendarFile(event) {
+        const now = new Date()
+          .toISOString()
+          .replace(/[-:]/g, "")
+          .replace(/\.\d+/, "");
+        const content = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Queen's ARC Schedule//EN\r\nCALSCALE:GREGORIAN\r\nBEGIN:VEVENT\r\nUID:${now}-${Math.random().toString(36).slice(2)}@queens-arc-schedule\r\nDTSTAMP:${now}\r\nDTSTART;TZID=America/Toronto:${formatIcal(event.extendedProps.icalStart)}\r\nDTEND;TZID=America/Toronto:${formatIcal(event.extendedProps.icalEnd)}\r\nSUMMARY:${escapeICS(event.title)}\r\nDESCRIPTION:${escapeICS(cleanDescription(event.extendedProps.description))}\r\nLOCATION:${escapeICS(event.extendedProps.location)}\r\nEND:VEVENT\r\nEND:VCALENDAR`;
+        return new File(
+          [content],
+          `${event.title.replace(/[^a-z0-9_-]+/gi, "_") || "ARC_event"}.ics`,
+          { type: "text/calendar" },
+        );
+      }
+      async function addToCalendar() {
+        if (!selectedEvent) return;
+        const file = makeCalendarFile(selectedEvent);
+        if (navigator.share && navigator.canShare?.({ files: [file] })) {
+          try {
+            await navigator.share({
+              title: selectedEvent.title,
+              files: [file],
             });
-
-            const actSelect = document.getElementById('activityFilter');
-            const locSelect = document.getElementById('locationFilter');
-
-            actSelect.innerHTML = '<option value="all">Activity (All)</option>';
-            locSelect.innerHTML = '<option value="all">Location (All)</option>';
-
-            const savedAct = localStorage.getItem('gym_activity');
-            const savedLoc = localStorage.getItem('gym_location');
-
-            Array.from(activitySet).sort().forEach(act => {
-                const opt = document.createElement('option');
-                opt.value = act; opt.innerText = act; 
-                if (savedAct === act) opt.selected = true; 
-                actSelect.appendChild(opt);
-            });
-            Array.from(locationSet).sort().forEach(loc => {
-                const opt = document.createElement('option');
-                opt.value = loc; opt.innerText = loc; 
-                if (savedLoc === loc) opt.selected = true; 
-                locSelect.appendChild(opt);
-            });
+            return;
+          } catch (error) {
+            if (error.name === "AbortError") return;
+          }
         }
-
-        function applyFilters(saveToCache = false) {
-            const actSelect = document.getElementById('activityFilter');
-            const locSelect = document.getElementById('locationFilter');
-            const selectedActivity = actSelect.value;
-            const selectedLocation = locSelect.value;
-
-            if (saveToCache) {
-                localStorage.setItem('gym_activity', selectedActivity);
-                localStorage.setItem('gym_location', selectedLocation);
-            }
-
-            const filteredEvents = allEvents.filter(e => {
-                const matchActivity = (selectedActivity === 'all') || (e.title === selectedActivity);
-                const matchLocation = (selectedLocation === 'all') || (e.extendedProps.location === selectedLocation);
-                return matchActivity && matchLocation;
-            });
-            calendar.removeAllEvents();
-            calendar.addEventSource(filteredEvents);
-        }
-
-        function resetFilters() {
-            document.getElementById('activityFilter').value = 'all';
-            document.getElementById('locationFilter').value = 'all';
-            localStorage.removeItem('gym_activity');
-            localStorage.removeItem('gym_location');
-            applyFilters();
-        }
-
-        function cleanDescription(html) {
-            if (!html) return "";
-            const txt = html.replace(/<br\s*\/?>/gi, '\n');
-            const doc = new DOMParser().parseFromString(txt, 'text/html');
-            return doc.body.textContent || "";
-        }
-
-        function escapeICS(str) {
-            if (!str) return "";
-            return str.replace(/\\/g, "\\\\")
-                      .replace(/;/g, "\\;")
-                      .replace(/,/g, "\\,")
-                      .replace(/\n/g, "\\n");
-        }
-
-        function downloadSingleEvent(calEvent) {
-            const start = calEvent.extendedProps.icalStart;
-            const end = calEvent.extendedProps.icalEnd;
-            const now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
-
-            const pad = number => String(number).padStart(2, '0');
-
-            const formatIcal = time =>
-                `${time.year}${pad(time.month)}${pad(time.day)}T${pad(time.hour)}${pad(time.minute)}${pad(time.second)}`;
-
-            const title = escapeICS(calEvent.title);
-            const location = escapeICS(calEvent.extendedProps.location || "");
-            const rawDesc = calEvent.extendedProps.description || "";
-            const description = escapeICS(cleanDescription(rawDesc));
-
-            const icsContent = 
-`BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Gym Schedule//EN
-BEGIN:VTIMEZONE
-TZID:America/Toronto
-BEGIN:DAYLIGHT
-TZOFFSETFROM:-0500
-TZOFFSETTO:-0400
-TZNAME:EDT
-DTSTART:19700308T020000
-RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
-END:DAYLIGHT
-BEGIN:STANDARD
-TZOFFSETFROM:-0400
-TZOFFSETTO:-0500
-TZNAME:EST
-DTSTART:19701101T020000
-RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
-END:STANDARD
-END:VTIMEZONE
-BEGIN:VEVENT
-UID:${now}@gymschedule
-DTSTAMP:${now}
-DTSTART;TZID=America/Toronto:${formatIcal(start)}
-DTEND;TZID=America/Toronto:${formatIcal(end)}
-SUMMARY:${title}
-DESCRIPTION:${description}
-LOCATION:${location}
-END:VEVENT
-END:VCALENDAR`;
-
-            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', `${calEvent.title.replace(/[^a-z0-9]/gi, '_')}.ics`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        let scrollPosition = 0;
-        function lockScroll() {
-            scrollPosition = window.scrollY;
-            document.body.style.position = 'fixed';
-            document.body.style.top = `-${scrollPosition}px`;
-            document.body.style.width = '100%';
-        }
-
-        function unlockScroll() {
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.width = '';
-            window.scrollTo(0, scrollPosition);
-        }
-
-        function showModal(event) {
-            lockScroll(); 
-
-            document.getElementById('modalTitle').innerText = event.title;
-            const loc = event.extendedProps.location || "No location info";
-            document.getElementById('locText').innerText = loc;
-            
-            const start = event.start;
-            const end = event.end;
-            const dateStr = start.toLocaleDateString([], {weekday: 'short', month: 'short', day: 'numeric'});
-            const timeStr = start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' - ' + end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            document.getElementById('modalTime').innerText = `${dateStr} • ${timeStr}`;
-            
-            const desc = event.extendedProps.description;
-            const descEl = document.getElementById('modalDesc');
-            if (desc) {
-                descEl.innerHTML = desc; 
-                descEl.classList.remove('hidden');
-            } else {
-                descEl.classList.add('hidden');
-            }
-            
-            const btn = document.getElementById('addToCalBtn');
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
-            newBtn.onclick = () => downloadSingleEvent(event);
-
-            document.getElementById('eventModal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('eventModal').classList.add('hidden');
-            unlockScroll();
-        }
+        const url = URL.createObjectURL(file),
+          link = document.createElement("a");
+        link.href = url;
+        link.target = "_self";
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+      }
+      function showModal(event) {
+        selectedEvent = event;
+        modalTitle.textContent = event.title;
+        locText.textContent =
+          event.extendedProps.location || "No location information";
+        const date = event.start.toLocaleDateString([], {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+          }),
+          time = `${event.start.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })} – ${event.end.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+        modalTime.textContent = `${date} • ${time}`;
+        const text = cleanDescription(event.extendedProps.description);
+        modalDesc.textContent = text;
+        modalDesc.hidden = !text;
+        scrollPosition = scrollY;
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${scrollPosition}px`;
+        document.body.style.width = "100%";
+        eventModal.hidden = false;
+      }
+      function closeModal() {
+        if (eventModal.hidden) return;
+        eventModal.hidden = true;
+        selectedEvent = null;
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        scrollTo(0, scrollPosition);
+      }
+      function preventGestureZoom() {
+        ["gesturestart", "gesturechange", "gestureend"].forEach((type) =>
+          document.addEventListener(type, (event) => event.preventDefault(), {
+            passive: false,
+          }),
+        );
+        let last = 0;
+        document.addEventListener(
+          "touchend",
+          (event) => {
+            const now = Date.now();
+            if (now - last <= 300) event.preventDefault();
+            last = now;
+          },
+          { passive: false },
+        );
+      }
     </script>
-</body>
+  </body>
 </html>
