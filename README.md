@@ -49,4 +49,4 @@ docker compose down
 
 This project is open source, and created by a Ph.D student from Civil Engineering at Queen's University. If you find any issues or have suggestions for improvements, feel free to open an issue or submit a pull request on the GitHub repository.
 
-Find more about me at: [Winchell Wang's blog](https://winchellwang.github.io/)
+**[Find more about author](https://winchellwang.github.io/)**
