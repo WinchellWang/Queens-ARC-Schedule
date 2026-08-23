@@ -45,6 +45,10 @@
         min-height: 100%;
         overscroll-behavior: none;
       }
+      html.modal-open,
+      html.modal-open body {
+        overflow: hidden;
+      }
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         background: var(--page);
@@ -272,11 +276,19 @@
       }
       .modal {
         position: fixed;
-        inset: 0;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
         z-index: 50;
         display: grid;
         place-items: center;
-        padding: 12px;
+        overflow: hidden;
+        padding: max(12px, env(safe-area-inset-top))
+          max(12px, env(safe-area-inset-right))
+          max(12px, env(safe-area-inset-bottom))
+          max(12px, env(safe-area-inset-left));
       }
       .modal[hidden] {
         display: none;
@@ -291,7 +303,7 @@
         position: relative;
         width: min(92vw, 520px);
         max-height: min(82dvh, 620px);
-        overflow: auto;
+        overflow: hidden;
         background: var(--panel);
         border: 1px solid var(--line);
         border-radius: 18px;
@@ -333,6 +345,11 @@
       .description {
         margin: 12px 0;
         padding: 10px;
+        max-height: min(28dvh, 210px);
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
         border-radius: 10px;
         background: var(--page);
         white-space: pre-wrap;
@@ -780,18 +797,14 @@
         modalDesc.textContent = text;
         modalDesc.hidden = !text;
         scrollPosition = scrollY;
-        document.body.style.position = "fixed";
-        document.body.style.top = `-${scrollPosition}px`;
-        document.body.style.width = "100%";
+        document.documentElement.classList.add("modal-open");
         eventModal.hidden = false;
       }
       function closeModal() {
         if (eventModal.hidden) return;
         eventModal.hidden = true;
         selectedEvent = null;
-        document.body.style.position = "";
-        document.body.style.top = "";
-        document.body.style.width = "";
+        document.documentElement.classList.remove("modal-open");
         scrollTo(0, scrollPosition);
       }
       function preventGestureZoom() {
