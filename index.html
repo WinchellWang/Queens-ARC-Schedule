@@ -760,29 +760,9 @@
         link.remove();
         setTimeout(() => URL.revokeObjectURL(url), 60000);
       }
-      async function addToCalendar() {
+      function addToCalendar() {
         if (!selectedEvent) return;
-        const file = makeCalendarFile(selectedEvent);
-        const shareData = { files: [file] };
-
-        if (
-          navigator.share &&
-          navigator.canShare?.(shareData) &&
-          (matchMedia("(display-mode: standalone)").matches ||
-            navigator.standalone === true)
-        ) {
-          try {
-            await navigator.share(shareData);
-            return;
-          } catch (error) {
-            // Closing the native share sheet is intentional; do not open a
-            // browser download as a surprising fallback in that case.
-            if (error.name === "AbortError") return;
-            console.warn("Could not share calendar event:", error);
-          }
-        }
-
-        downloadCalendarFile(file);
+        downloadCalendarFile(makeCalendarFile(selectedEvent));
       }
       function showModal(event) {
         selectedEvent = event;
