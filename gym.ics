@@ -5,7 +5,7 @@ NAME:ARC Schedule
 X-WR-CALNAME:ARC Schedule
 REFRESH-INTERVAL;VALUE=DURATION:PT60M
 X-PUBLISHED-TTL:PT60M
-LAST-MODIFIED:20260823T055622Z
+LAST-MODIFIED:20260823T115622Z
 COLOR:firebrick
 BEGIN:VTIMEZONE
 TZID:America/Toronto
@@ -27,7 +27,7 @@ END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
 UID:0caceedb2931e1f87374c8ec42343a1fdf6cf552-f73bcc6a089a2e5536d2e04dd2a7c96b13669bef-TH-153000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Summer Community Lane Swims- $4
 LOCATION:Pool - Deep End
 DESCRIPTION:Queen's Aquatics is welcoming community members to join us for lane and open rec swim times\, June 29th- August 29th.\n\n\nPlease note:\n$4 Community Swims are for lane swims only and cannot be used to access other parts of the facility.\n\nNo refunds. Please be aware that lane and rec swim times may change due to program\, event\, and staff demands - for the most up to date schedule information\, download the Queen’s Get Active app for iOS or Google Play. Don’t forget to allow notification alerts!
@@ -40,7 +40,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260827T220000Z;BYDAY=TH
 END:VEVENT
 BEGIN:VEVENT
 UID:38c9ca0d930516e9ea5c5135ed40b5e7ad55a048-1d24c6169e663b57cbd5dbae702a71572d893967-MO-WE-TH-FR-073000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -53,7 +53,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260831T124500Z;BYDAY=MO,WE,TH,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:38c9ca0d930516e9ea5c5135ed40b5e7ad55a048-1d24c6169e663b57cbd5dbae702a71572d893967-MO-WE-FR-090000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Women's Lane Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -66,7 +66,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260831T140000Z;BYDAY=MO,WE,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:38c9ca0d930516e9ea5c5135ed40b5e7ad55a048-1d24c6169e663b57cbd5dbae702a71572d893967-SU-100000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim/ Rec Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -78,7 +78,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260830T163000Z;BYDAY=SU
 END:VEVENT
 BEGIN:VEVENT
 UID:38c9ca0d930516e9ea5c5135ed40b5e7ad55a048-1d24c6169e663b57cbd5dbae702a71572d893967-SA-113000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane/Rec Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -91,7 +91,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260829T180000Z;BYDAY=SA
 END:VEVENT
 BEGIN:VEVENT
 UID:38c9ca0d930516e9ea5c5135ed40b5e7ad55a048-1d24c6169e663b57cbd5dbae702a71572d893967-MO-TU-WE-TH-FR-120000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -104,7 +104,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260831T174500Z;BYDAY=MO,TU,WE,TH,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:38c9ca0d930516e9ea5c5135ed40b5e7ad55a048-1d24c6169e663b57cbd5dbae702a71572d893967-MO-TU-WE-TH-FR-120000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -117,7 +117,7 @@ RECURRENCE-ID;TZID=America/Toronto:20260831T120000
 END:VEVENT
 BEGIN:VEVENT
 UID:38c9ca0d930516e9ea5c5135ed40b5e7ad55a048-e05a1e9b3b6e0b166cb9ec819fbc84e853a28176-MO-TU-WE-153000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Shallow End
 DESCRIPTION:
@@ -130,7 +130,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260826T220000Z;BYDAY=MO,TU,WE
 END:VEVENT
 BEGIN:VEVENT
 UID:38c9ca0d930516e9ea5c5135ed40b5e7ad55a048-e05a1e9b3b6e0b166cb9ec819fbc84e853a28176-FR-160000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Shallow End
 DESCRIPTION:
@@ -143,7 +143,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260828T213000Z;BYDAY=FR
 END:VEVENT
 BEGIN:VEVENT
 UID:5675d8a212f53c423d70731c60e5c7a1f102afbf-092c5c051312a6a589452bc83c5a2cff3cbcc372-MO-TU-WE-TH-FR-113000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Pickleball
 LOCATION:Gym 4B
 DESCRIPTION:
@@ -155,7 +155,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261007T172000Z;BYDAY=MO,TU,WE,TH,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:5675d8a212f53c423d70731c60e5c7a1f102afbf-092c5c051312a6a589452bc83c5a2cff3cbcc372-MO-TU-WE-TH-FR-160000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Pickleball
 LOCATION:Gym 4B
 DESCRIPTION:
@@ -167,7 +167,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261007T212000Z;BYDAY=MO,TU,WE,TH,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:6522fc1144c9c636ff36dc6f1b51abeceb262e77-455924b9d34fefde2cc5c504f52b58e9ff6868c9-TU-120000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:PRIVATE CLASS - Employee Wellness - Cycle
 LOCATION:Studio - Cycle
 DESCRIPTION:Get prepared to get energized and sweat to the beat of the music and strobe lights through high intensity interval training (H.I.I.T) and tempo segments. This workout will feature different positions on the spin bike to utilize different muscle compartments for a more overall body workout.
@@ -178,7 +178,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=323:In-Person Classes
 END:VEVENT
 BEGIN:VEVENT
 UID:6c0f243246195ed53517cb8c858e50f359f491f7-a45046fa904a2f753a0e8108aeaeded36f711c14-MO-TU-WE-TH-113000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Volleyball
 LOCATION:Gym 1 - Main Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -197,7 +197,7 @@ EXDATE;TZID=America/Toronto:20261006T113000
 END:VEVENT
 BEGIN:VEVENT
 UID:6c0f243246195ed53517cb8c858e50f359f491f7-4b643b43bed2c4f5fd6d0a186bdfe729747c0618-MO-TU-WE-TH-113000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Volleyball
 LOCATION:Gym 2 - Upper Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -215,7 +215,7 @@ EXDATE;TZID=America/Toronto:20261005T113000
 END:VEVENT
 BEGIN:VEVENT
 UID:6c0f243246195ed53517cb8c858e50f359f491f7-cb040ac76e4991e20699f9b6a53ba6c7827b823a-FR-113000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Volleyball
 LOCATION:Gym 4A
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -227,7 +227,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261002T172000Z;BYDAY=FR
 END:VEVENT
 BEGIN:VEVENT
 UID:6c0f243246195ed53517cb8c858e50f359f491f7-cb040ac76e4991e20699f9b6a53ba6c7827b823a-MO-TU-WE-TH-FR-160000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Volleyball
 LOCATION:Gym 4A
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -239,7 +239,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261007T212000Z;BYDAY=MO,TU,WE,TH,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:778ed4b6f108b9090d0393adfa6640e9f01015ef-ed77f93b8fd0bf6676efebeae4adbe6f13d7f9a3-TH-120000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:PRIVATE CLASS - Employee Wellness - Strength
 LOCATION:Studio 1
 DESCRIPTION:
@@ -250,7 +250,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=323:In-Person Classes
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-e05a1e9b3b6e0b166cb9ec819fbc84e853a28176-MO-WE-061500@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Shallow End
 DESCRIPTION:
@@ -263,7 +263,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261007T114500Z;BYDAY=MO,WE
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-1d24c6169e663b57cbd5dbae702a71572d893967-TU-WE-TH-FR-073000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -279,7 +279,7 @@ EXDATE;TZID=America/Toronto:20260828T073000
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-1d24c6169e663b57cbd5dbae702a71572d893967-TU-WE-TH-FR-073000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:CANCELLED - Member Lane Swim
 STATUS:CANCELLED
 LOCATION:Pool - Full Pool
@@ -293,7 +293,7 @@ RECURRENCE-ID;TZID=America/Toronto:20260825T073000
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-5a00c3344a9462289bcd4ea49ee02434474ae6cd-FR-074500@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Deep Lanes 1-5\, Pool - Shallow End
 DESCRIPTION:
@@ -306,7 +306,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261002T124500Z;BYDAY=FR
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-5a00c3344a9462289bcd4ea49ee02434474ae6cd-TU-TH-074500@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Deep Lanes 1-5\, Pool - Shallow End
 DESCRIPTION:
@@ -315,11 +315,11 @@ DTEND;TZID=America/Toronto:20260908T090000
 X-FUSION-ACTIVITY-ID:895c908f67f580cedbcbc760ca65bb1e68a48f61
 X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=721:Lane Swim Schedules
 X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=322:Open Rec Swimming
-RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261006T130000Z;BYDAY=TU,TH
+RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261008T130000Z;BYDAY=TU,TH
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-1d24c6169e663b57cbd5dbae702a71572d893967-MO-WE-074500@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -332,7 +332,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261007T124500Z;BYDAY=MO,WE
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-ed77f93b8fd0bf6676efebeae4adbe6f13d7f9a3-TH-083000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Group Fitness - HOLD
 LOCATION:Studio 1
 DESCRIPTION:
@@ -344,7 +344,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261001T133000Z;BYDAY=TH
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-1d24c6169e663b57cbd5dbae702a71572d893967-MO-WE-FR-090000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Women's Only Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -358,7 +358,7 @@ EXDATE;TZID=America/Toronto:20260907T090000
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-1d24c6169e663b57cbd5dbae702a71572d893967-MO-WE-FR-090000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Women's Lane Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -371,7 +371,7 @@ RECURRENCE-ID;TZID=America/Toronto:20260902T090000
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-1d24c6169e663b57cbd5dbae702a71572d893967-MO-WE-FR-090000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Women's Lane Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -384,7 +384,7 @@ RECURRENCE-ID;TZID=America/Toronto:20260904T090000
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-1d24c6169e663b57cbd5dbae702a71572d893967-MO-TU-WE-TH-FR-113000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -397,7 +397,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261007T173000Z;BYDAY=MO,TU,WE,TH,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-1d24c6169e663b57cbd5dbae702a71572d893967-TU-WE-TH-FR-120000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -410,7 +410,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260904T174500Z;BYDAY=TU,WE,TH,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-1d24c6169e663b57cbd5dbae702a71572d893967-SU-SA-120000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -424,7 +424,7 @@ EXDATE;TZID=America/Toronto:20261003T120000
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-1d24c6169e663b57cbd5dbae702a71572d893967-SU-SA-120000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Swim - CANCELLED
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -437,7 +437,7 @@ RECURRENCE-ID;TZID=America/Toronto:20260926T120000
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-e05a1e9b3b6e0b166cb9ec819fbc84e853a28176-FR-153000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Shallow End
 DESCRIPTION:
@@ -450,7 +450,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261002T210000Z;BYDAY=FR
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-e05a1e9b3b6e0b166cb9ec819fbc84e853a28176-TU-TH-153000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Shallow End
 DESCRIPTION:
@@ -463,7 +463,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261006T213000Z;BYDAY=TU,TH
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-778627418cb4b30cdfe47281afdbf30f1a173700-FR-170000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Black Community Swims
 LOCATION:Pool
 DESCRIPTION:
@@ -474,7 +474,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-ed77f93b8fd0bf6676efebeae4adbe6f13d7f9a3-TU-173000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Group Fitness- HOLD
 LOCATION:Studio 1
 DESCRIPTION:
@@ -486,7 +486,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261006T223000Z;BYDAY=TU
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-1d24c6169e663b57cbd5dbae702a71572d893967-FR-190000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Swim
 LOCATION:Pool - Full Pool
 DESCRIPTION:
@@ -499,7 +499,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261003T010000Z;BYDAY=FR
 END:VEVENT
 BEGIN:VEVENT
 UID:895c908f67f580cedbcbc760ca65bb1e68a48f61-e05a1e9b3b6e0b166cb9ec819fbc84e853a28176-MO-TU-TH-210000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Member Lane Swim
 LOCATION:Pool - Shallow End
 DESCRIPTION:
@@ -512,7 +512,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261007T023000Z;BYDAY=MO,TU,TH
 END:VEVENT
 BEGIN:VEVENT
 UID:9b83262d060828e4797be0a9d7a7bab0134fc187-b340f5a69c45c8b92052ef8a0334282ac90eb1be-TH-FR-060000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Pickleball
 LOCATION:Gym 4 - Ross
 DESCRIPTION:
@@ -524,7 +524,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260821T133000Z;BYDAY=TH,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:9b83262d060828e4797be0a9d7a7bab0134fc187-b340f5a69c45c8b92052ef8a0334282ac90eb1be-SU-080000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Pickleball
 LOCATION:Gym 4 - Ross
 DESCRIPTION:
@@ -535,7 +535,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:9b83262d060828e4797be0a9d7a7bab0134fc187-b340f5a69c45c8b92052ef8a0334282ac90eb1be-SA-123000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Pickleball
 LOCATION:Gym 4 - Ross
 DESCRIPTION:
@@ -546,7 +546,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:9b83262d060828e4797be0a9d7a7bab0134fc187-b340f5a69c45c8b92052ef8a0334282ac90eb1be-TH-180000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Pickleball
 LOCATION:Gym 4 - Ross
 DESCRIPTION:
@@ -557,7 +557,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:a719c4d1964fb75f67b3952f5e4e3a35b5afd070-4b643b43bed2c4f5fd6d0a186bdfe729747c0618-FR-060000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Volleyball
 LOCATION:Gym 2 - Upper Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -568,7 +568,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:a719c4d1964fb75f67b3952f5e4e3a35b5afd070-4b643b43bed2c4f5fd6d0a186bdfe729747c0618-TH-060000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Volleyball
 LOCATION:Gym 2 - Upper Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -579,7 +579,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:a719c4d1964fb75f67b3952f5e4e3a35b5afd070-a45046fa904a2f753a0e8108aeaeded36f711c14-SA-080000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Volleyball
 LOCATION:Gym 1 - Main Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -590,7 +590,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:a719c4d1964fb75f67b3952f5e4e3a35b5afd070-b340f5a69c45c8b92052ef8a0334282ac90eb1be-SA-080000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Volleyball
 LOCATION:Gym 4 - Ross
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -601,7 +601,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:a719c4d1964fb75f67b3952f5e4e3a35b5afd070-4b643b43bed2c4f5fd6d0a186bdfe729747c0618-TH-163000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Volleyball
 LOCATION:Gym 2 - Upper Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -612,7 +612,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:a719c4d1964fb75f67b3952f5e4e3a35b5afd070-4b643b43bed2c4f5fd6d0a186bdfe729747c0618-TH-190000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Volleyball
 LOCATION:Gym 2 - Upper Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -623,7 +623,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:a7e0a7bab20685610f532a00b49166937eb7ea6c-228e3031997851152af804714cacef6709fd2875-MO-TU-WE-TH-FR-083000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Studio Time
 LOCATION:Studio 3
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -635,7 +635,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260828T170000Z;BYDAY=MO,TU,WE,TH,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:a7e0a7bab20685610f532a00b49166937eb7ea6c-228e3031997851152af804714cacef6709fd2875-FR-160000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Studio Time
 LOCATION:Studio 3
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -647,7 +647,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260828T215000Z;BYDAY=FR
 END:VEVENT
 BEGIN:VEVENT
 UID:a7e0a7bab20685610f532a00b49166937eb7ea6c-228e3031997851152af804714cacef6709fd2875-MO-TU-TH-160000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Studio Time
 LOCATION:Studio 3
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -659,7 +659,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260827T233000Z;BYDAY=MO,TU,TH
 END:VEVENT
 BEGIN:VEVENT
 UID:ac2fcd5def177c455d9bbf08c8b50305d1d80621-4b643b43bed2c4f5fd6d0a186bdfe729747c0618-FR-113000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Badminton
 LOCATION:Gym 2 - Upper Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -671,7 +671,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261002T172000Z;BYDAY=FR
 END:VEVENT
 BEGIN:VEVENT
 UID:ac2fcd5def177c455d9bbf08c8b50305d1d80621-6f9ae22a09bab1152b5abb1f54ccee29771e0ab4-MO-TU-WE-TH-113000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Badminton
 LOCATION:Gym 3 - Bartlett\, Gym 4A
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -683,7 +683,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261007T172000Z;BYDAY=MO,TU,WE,TH
 END:VEVENT
 BEGIN:VEVENT
 UID:ac2fcd5def177c455d9bbf08c8b50305d1d80621-ff18f0d900ab28531fd4b78b2f1b98449b051aef-TU-WE-TH-FR-120000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Badminton
 LOCATION:Gym 3 - Bartlett
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -695,7 +695,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260904T170000Z;BYDAY=TU,WE,TH,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:ac2fcd5def177c455d9bbf08c8b50305d1d80621-ff18f0d900ab28531fd4b78b2f1b98449b051aef-MO-TU-WE-TH-FR-160000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Badminton
 LOCATION:Gym 3 - Bartlett
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -709,7 +709,7 @@ EXDATE;TZID=America/Toronto:20260924T160000
 END:VEVENT
 BEGIN:VEVENT
 UID:bf78e6f36b00cccb52c3bc4f11f5bf2d66e39706-ff18f0d900ab28531fd4b78b2f1b98449b051aef-TH-FR-060000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Badminton
 LOCATION:Gym 3 - Bartlett
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -721,7 +721,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260821T123000Z;BYDAY=TH,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:bf78e6f36b00cccb52c3bc4f11f5bf2d66e39706-ff18f0d900ab28531fd4b78b2f1b98449b051aef-SU-SA-080000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Badminton
 LOCATION:Gym 3 - Bartlett
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -733,7 +733,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260823T215000Z;BYDAY=SU,SA
 END:VEVENT
 BEGIN:VEVENT
 UID:bf78e6f36b00cccb52c3bc4f11f5bf2d66e39706-7354d4e80018f36b2ce4293f056a3dc8f4d1a568-FR-120000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Badminton
 LOCATION:ARC North Entrance Table\, Gym 3 - Bartlett
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -744,7 +744,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:bf78e6f36b00cccb52c3bc4f11f5bf2d66e39706-7354d4e80018f36b2ce4293f056a3dc8f4d1a568-TH-120000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Badminton
 LOCATION:ARC North Entrance Table\, Gym 3 - Bartlett
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -755,7 +755,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:bf78e6f36b00cccb52c3bc4f11f5bf2d66e39706-ff18f0d900ab28531fd4b78b2f1b98449b051aef-MO-TU-WE-FR-120000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Badminton
 LOCATION:Gym 3 - Bartlett
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -767,7 +767,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260831T170000Z;BYDAY=MO,TU,WE,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:c828d78833e673f7abc837a45c37aabf10dcb528-a45046fa904a2f753a0e8108aeaeded36f711c14-FR-060000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 1 - Main Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -779,7 +779,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260828T130000Z;BYDAY=FR
 END:VEVENT
 BEGIN:VEVENT
 UID:c828d78833e673f7abc837a45c37aabf10dcb528-a45046fa904a2f753a0e8108aeaeded36f711c14-FR-060000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 1 - Main Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -791,7 +791,7 @@ RECURRENCE-ID;TZID=America/Toronto:20260828T060000
 END:VEVENT
 BEGIN:VEVENT
 UID:c828d78833e673f7abc837a45c37aabf10dcb528-a45046fa904a2f753a0e8108aeaeded36f711c14-TH-060000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 1 - Main Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -803,7 +803,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260827T130000Z;BYDAY=TH
 END:VEVENT
 BEGIN:VEVENT
 UID:c828d78833e673f7abc837a45c37aabf10dcb528-a45046fa904a2f753a0e8108aeaeded36f711c14-TH-060000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 1 - Main Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -815,7 +815,7 @@ RECURRENCE-ID;TZID=America/Toronto:20260827T060000
 END:VEVENT
 BEGIN:VEVENT
 UID:c828d78833e673f7abc837a45c37aabf10dcb528-a45046fa904a2f753a0e8108aeaeded36f711c14-MO-WE-060000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 1 - Main Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -827,7 +827,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260826T130000Z;BYDAY=MO,WE
 END:VEVENT
 BEGIN:VEVENT
 UID:c828d78833e673f7abc837a45c37aabf10dcb528-a45046fa904a2f753a0e8108aeaeded36f711c14-TU-080000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 1 - Main Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -838,7 +838,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:c828d78833e673f7abc837a45c37aabf10dcb528-4b643b43bed2c4f5fd6d0a186bdfe729747c0618-SA-080000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 2 - Upper Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -849,7 +849,7 @@ X-FUSION-CATEGORY;X-FUSION-CATEGORY-ID=321:Open Rec
 END:VEVENT
 BEGIN:VEVENT
 UID:c828d78833e673f7abc837a45c37aabf10dcb528-a45046fa904a2f753a0e8108aeaeded36f711c14-MO-TH-FR-113000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 1 - Main Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -861,7 +861,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260828T170000Z;BYDAY=MO,TH,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:c828d78833e673f7abc837a45c37aabf10dcb528-a45046fa904a2f753a0e8108aeaeded36f711c14-TU-WE-120000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 1 - Main Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -873,7 +873,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260826T170000Z;BYDAY=TU,WE
 END:VEVENT
 BEGIN:VEVENT
 UID:c828d78833e673f7abc837a45c37aabf10dcb528-a45046fa904a2f753a0e8108aeaeded36f711c14-MO-TH-193000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 1 - Main Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -885,7 +885,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20260825T005000Z;BYDAY=MO,TH
 END:VEVENT
 BEGIN:VEVENT
 UID:e8289a9308da16b6b98267e720ec3afa6b263540-a45046fa904a2f753a0e8108aeaeded36f711c14-MO-TU-WE-TH-113000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 1 - Main Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -905,7 +905,7 @@ EXDATE;TZID=America/Toronto:20261005T113000
 END:VEVENT
 BEGIN:VEVENT
 UID:e8289a9308da16b6b98267e720ec3afa6b263540-4b643b43bed2c4f5fd6d0a186bdfe729747c0618-MO-TU-WE-TH-113000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 2 - Upper Gym
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -924,7 +924,7 @@ EXDATE;TZID=America/Toronto:20261006T113000
 END:VEVENT
 BEGIN:VEVENT
 UID:e8289a9308da16b6b98267e720ec3afa6b263540-ff18f0d900ab28531fd4b78b2f1b98449b051aef-FR-113000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 3 - Bartlett
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -936,7 +936,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261002T172000Z;BYDAY=FR
 END:VEVENT
 BEGIN:VEVENT
 UID:e8289a9308da16b6b98267e720ec3afa6b263540-ea99f69254fa74bc0a2747800e3b2c5dd8b70d1d-MO-TU-WE-TH-FR-113000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 5
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
@@ -948,7 +948,7 @@ RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20261007T172000Z;BYDAY=MO,TU,WE,TH,FR
 END:VEVENT
 BEGIN:VEVENT
 UID:e8289a9308da16b6b98267e720ec3afa6b263540-ea99f69254fa74bc0a2747800e3b2c5dd8b70d1d-MO-TU-WE-TH-FR-160000@school110.innosoftfusiongo.com
-DTSTAMP:20260823T055622Z
+DTSTAMP:20260823T115622Z
 SUMMARY:Open Rec Basketball
 LOCATION:Gym 5
 DESCRIPTION:Live facility schedules can be viewed <a href="https://getactive.gogaelsgo.com/facility/getschedule">HERE</a>  <br><br>\n\n<b> No pre-registration is required for any open rec sports programming</b>
