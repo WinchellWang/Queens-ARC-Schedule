@@ -33,6 +33,7 @@
         --day-heading-border: #d6dce5;
         --queens-gold: #fabd0f;
         --queens-gold-text: #212121;
+        --modal-safe-area: #fff;
       }
       * {
         box-sizing: border-box;
@@ -45,7 +46,10 @@
         min-height: 100%;
         overscroll-behavior: none;
       }
-      html.modal-open,
+      html.modal-open {
+        overflow: hidden;
+        background: var(--modal-safe-area);
+      }
       html.modal-open body {
         overflow: hidden;
       }
@@ -292,7 +296,14 @@
       .modal-backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(8, 15, 28, 0.56);
+        background: linear-gradient(
+          to bottom,
+          rgba(8, 15, 28, 0.56) 0,
+          rgba(8, 15, 28, 0.56)
+            calc(100% - env(safe-area-inset-bottom) - 72px),
+          var(--modal-safe-area) calc(100% - env(safe-area-inset-bottom)),
+          var(--modal-safe-area) 100%
+        );
         backdrop-filter: blur(3px);
       }
       .modal-card {
@@ -446,6 +457,7 @@
           --day-heading-bg: #2a2e35;
           --day-heading-text: #e6eaf0;
           --day-heading-border: #444b57;
+          --modal-safe-area: #111214;
         }
         .detail-icon {
           background: #18344e;
@@ -524,7 +536,6 @@
     <script>
       let calendar,
         selectedEvent = null,
-        scrollPosition = 0,
         allEvents = [];
       const portraitQuery = matchMedia("(orientation: portrait)");
       const startOfWeek = (date) => {
@@ -792,7 +803,6 @@
         const text = cleanDescription(event.extendedProps.description);
         modalDesc.textContent = text;
         modalDesc.hidden = !text;
-        scrollPosition = scrollY;
         document.documentElement.classList.add("modal-open");
         eventModal.hidden = false;
       }
@@ -801,7 +811,6 @@
         eventModal.hidden = true;
         selectedEvent = null;
         document.documentElement.classList.remove("modal-open");
-        scrollTo(0, scrollPosition);
       }
       function preventGestureZoom() {
         ["gesturestart", "gesturechange", "gestureend"].forEach((type) =>
