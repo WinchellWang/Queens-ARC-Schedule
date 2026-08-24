@@ -3,6 +3,7 @@ const APP_SHELL = [
   "./",
   "./index.html",
   "./about.html",
+  "./sw.js",
   "./manifest.json",
   "./web_logo.jpg",
   "./assets/style.css",
