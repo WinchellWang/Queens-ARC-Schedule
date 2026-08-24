@@ -100,12 +100,12 @@
       }
       .brand p {
         margin: 3px 0 0;
-        color: #b90e31;
+        color: var(--muted);
         font-size: clamp(10px, 2.4vw, 15px);
         white-space: nowrap;
       }
       .brand-home {
-        color: inherit;
+        color: #b90e31;
         font: inherit;
         font-weight: inherit;
         text-decoration: none;
