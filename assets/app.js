@@ -17,6 +17,10 @@ const startOfWeek = (date) => {
 const rangeStart = startOfWeek(new Date()),
   rangeEnd = new Date(rangeStart);
 rangeEnd.setDate(rangeEnd.getDate() + 14);
+document.querySelector(".brand-home")?.addEventListener("click", (event) => {
+  event.preventDefault();
+  window.location.reload();
+});
 document.addEventListener("DOMContentLoaded", () => {
   calendar = new FullCalendar.Calendar(
     document.getElementById("calendar"),
@@ -113,24 +117,20 @@ async function refreshScheduleIfNeeded(force = false) {
   await fetchAndParseICS();
 }
 async function fetchAndParseICS() {
-  isScheduleLoading = true;
-  setScheduleStatus("Loading latest schedule…");
   try {
-    const response = await fetch(`${scheduleUrl}?t=${Date.now()}`, {
+    const response = await fetch(`./gym.ics?t=${Date.now()}`, {
       cache: "no-store",
     });
+
     if (!response.ok) {
       throw new Error(`Schedule request failed: ${response.status}`);
     }
-    const data = await response.text();
-    parseICS(data);
-    lastScheduleRefresh = Date.now();
-    setScheduleStatus("");
+
+    parseICS(await response.text());
   } catch (error) {
     console.error("Could not load schedule:", error);
-    setScheduleStatus("Could not load the latest schedule.");
-  } finally {
-    isScheduleLoading = false;
+
+    showScheduleToast("Unable to load the latest schedule.");
   }
 }
 function setScheduleStatus(message) {
@@ -204,7 +204,7 @@ function parseICS(data) {
     applyFilters(false);
   } catch (error) {
     console.error("Could not parse schedule:", error);
-    setScheduleStatus("Could not parse the latest schedule.");
+    showScheduleToast("Unable to load the latest schedule.");
   }
 }
 function populateDropdowns() {
@@ -349,4 +349,20 @@ function preventGestureZoom() {
     },
     { passive: false },
   );
+}
+let scheduleToastTimer;
+function showScheduleToast(message) {
+  const toast = document.getElementById("scheduleToast");
+  if (!toast) return;
+  clearTimeout(scheduleToastTimer);
+  toast.textContent = message;
+  toast.hidden = false;
+  toast.classList.remove("is-hiding");
+  scheduleToastTimer = setTimeout(() => {
+    toast.classList.add("is-hiding");
+    setTimeout(() => {
+      toast.hidden = true;
+      toast.classList.remove("is-hiding");
+    }, 220);
+  }, 2000);
 }

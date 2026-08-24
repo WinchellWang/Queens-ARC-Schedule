@@ -25,13 +25,31 @@
       gtag('js', new Date());
       gtag('config', 'G-SM0J28NYS4');
     </script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./assets/sw.js")
+            .then((registration) => {
+              console.log("Service Worker registered:", registration.scope);
+            })
+            .catch((error) => {
+              console.error("Service Worker registration failed:", error);
+            });
+        });
+      }
+    </script>
     <link rel="stylesheet" href="./assets/style.css" />
   </head>
   <body>
     <header class="site-header">
       <div class="header-inner">
         <div class="brand">
-          <h1>Queen's ARC Schedule</h1>
+          <h1>
+            <a class="brand-home" href="./" aria-label="Reload Queen's ARC Schedule">
+              Queen's ARC Schedule
+            </a>
+          </h1>
           <p>Tap an event to add to calendar</p>
         </div>
         <nav class="header-actions" aria-label="Project links">
@@ -99,5 +117,12 @@
       </article>
     </div>
     <script src="./assets/app.js" defer></script>
+    <div
+      id="scheduleToast"
+      class="schedule-toast"
+      role="status"
+      aria-live="polite"
+      hidden
+    ></div>
   </body>
 </html>
