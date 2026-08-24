@@ -29,7 +29,7 @@
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
           navigator.serviceWorker
-            .register("./assets/sw.js")
+            .register("./sw.js")
             .then((registration) => {
               console.log("Service Worker registered:", registration.scope);
             })
@@ -78,6 +78,7 @@
           class="schedule-status"
           role="status"
           aria-live="polite"
+          hidden
         >
           <span class="schedule-spinner" aria-hidden="true"></span>
           <span id="scheduleStatusText">Loading latest schedule…</span>

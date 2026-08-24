@@ -13,6 +13,7 @@
         --queens-gold: #fabd0f;
         --queens-gold-text: #212121;
         --modal-overlay: rgba(255, 255, 255, 0.10);
+        --modal-transition: rgba(255, 255, 255, 0.42);
         --modal-safe-area: #ffffff;
       }
       * {
@@ -113,13 +114,10 @@
       .brand-home:visited {
         color: inherit;
       }
-      .brand-home:hover {
-        color: inherit;
-        text-decoration: none;
-        filter: none;
-      }
+      .brand-home:hover,
       .brand-home:active {
         color: inherit;
+        text-decoration: none;
         filter: none;
       }
       .header-actions {
@@ -380,10 +378,13 @@
           var(--modal-overlay) 0%,
           var(--modal-overlay)
             calc(100% - env(safe-area-inset-bottom) - 96px),
-          rgba(255, 255, 255, 0.42)
+
+          var(--modal-transition)
             calc(100% - env(safe-area-inset-bottom) - 48px),
+
           var(--modal-safe-area)
             calc(100% - env(safe-area-inset-bottom)),
+
           var(--modal-safe-area) 100%
         );
         -webkit-backdrop-filter: blur(3px);
@@ -537,22 +538,13 @@
           --panel: #1e1f22;
           --page: #111214;
           --top: #303135;
+
           --day-heading-bg: #2a2e35;
           --day-heading-text: #e6eaf0;
           --day-heading-border: #444b57;
 
           --modal-overlay: rgba(8, 15, 28, 0.56);
+          --modal-transition: rgba(17, 18, 20, 0.82);
           --modal-safe-area: #111214;
-        }
-
-        .detail-icon {
-          background: #18344e;
-          color: #75baff;
-        }
-
-        .fc-theme-standard td,
-        .fc-theme-standard th,
-        .fc-theme-standard .fc-scrollgrid {
-          border-color: var(--line) !important;
         }
       }

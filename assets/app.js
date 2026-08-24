@@ -17,7 +17,8 @@ const startOfWeek = (date) => {
 const rangeStart = startOfWeek(new Date()),
   rangeEnd = new Date(rangeStart);
 rangeEnd.setDate(rangeEnd.getDate() + 14);
-document.querySelector(".brand-home")?.addEventListener("click", (event) => {
+const brandHome = document.querySelector(".brand-home");
+brandHome?.addEventListener("click", (event) => {
   event.preventDefault();
   window.location.reload();
 });
@@ -117,35 +118,36 @@ async function refreshScheduleIfNeeded(force = false) {
   await fetchAndParseICS();
 }
 async function fetchAndParseICS() {
+  if (isScheduleLoading) return;
+  isScheduleLoading = true;
+  setScheduleLoading(true);
   try {
-    const response = await fetch(`./gym.ics?t=${Date.now()}`, {
+    const response = await fetch(`${scheduleUrl}?t=${Date.now()}`, {
       cache: "no-store",
     });
-
     if (!response.ok) {
       throw new Error(`Schedule request failed: ${response.status}`);
     }
-
-    parseICS(await response.text());
+    const data = await response.text();
+    parseICS(data);
+    lastScheduleRefresh = Date.now();
+    setScheduleLoading(false);
   } catch (error) {
     console.error("Could not load schedule:", error);
-
+    setScheduleLoading(false);
     showScheduleToast("Unable to load the latest schedule.");
+  } finally {
+    isScheduleLoading = false;
   }
 }
-function setScheduleStatus(message) {
-  let status = document.getElementById("scheduleStatus");
-  if (!status) {
-    status = document.createElement("div");
-    status.id = "scheduleStatus";
-    status.className = "schedule-status";
-    status.setAttribute("role", "status");
-    status.setAttribute("aria-live", "polite");
-    const calendarElement = document.getElementById("calendar");
-    calendarElement.parentElement.insertBefore(status, calendarElement);
+function setScheduleLoading(isLoading) {
+  const status = document.getElementById("scheduleStatus");
+  const text = document.getElementById("scheduleStatusText");
+  if (!status || !text) return;
+  status.hidden = !isLoading;
+  if (isLoading) {
+    text.textContent = "Loading latest schedule…";
   }
-  status.textContent = message;
-  status.hidden = !message;
 }
 function parseICS(data) {
   try {
@@ -204,7 +206,7 @@ function parseICS(data) {
     applyFilters(false);
   } catch (error) {
     console.error("Could not parse schedule:", error);
-    showScheduleToast("Unable to load the latest schedule.");
+    throw error;;
   }
 }
 function populateDropdowns() {
@@ -350,17 +352,19 @@ function preventGestureZoom() {
     { passive: false },
   );
 }
-let scheduleToastTimer;
+let scheduleToastTimer = null;
 function showScheduleToast(message) {
   const toast = document.getElementById("scheduleToast");
   if (!toast) return;
-  clearTimeout(scheduleToastTimer);
+  if (scheduleToastTimer) {
+    clearTimeout(scheduleToastTimer);
+  }
   toast.textContent = message;
   toast.hidden = false;
   toast.classList.remove("is-hiding");
-  scheduleToastTimer = setTimeout(() => {
+  scheduleToastTimer = window.setTimeout(() => {
     toast.classList.add("is-hiding");
-    setTimeout(() => {
+    window.setTimeout(() => {
       toast.hidden = true;
       toast.classList.remove("is-hiding");
     }, 220);
