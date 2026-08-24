@@ -100,7 +100,7 @@
       }
       .brand p {
         margin: 3px 0 0;
-        color: var(--muted);
+        color: #b90e31;
         font-size: clamp(10px, 2.4vw, 15px);
         white-space: nowrap;
       }
