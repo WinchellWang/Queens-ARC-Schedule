@@ -150,12 +150,6 @@
         margin: 0 auto;
         padding: 4px;
       }
-      .schedule-intro {
-        margin: 5px 4px 8px;
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.4;
-      }
       .noscript-message {
         margin: 12px;
         padding: 12px;
