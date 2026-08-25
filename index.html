@@ -6,6 +6,17 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
+    <meta name="description" content="Browse the latest Queen's University ARC open recreation schedule. Filter activities and locations, view the next two weeks, and add events to your calendar." />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#d9d9dc" />
+    <link rel="canonical" href="https://winchellwang.github.io/Queens-ARC-Schedule/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Queen's ARC Schedule" />
+    <meta property="og:title" content="Queen's ARC Open Recreation Schedule" />
+    <meta property="og:description" content="Browse upcoming Queen's University ARC open recreation activities, filter the schedule, and add events to your calendar." />
+    <meta property="og:url" content="https://winchellwang.github.io/Queens-ARC-Schedule/" />
+    <meta property="og:image" content="https://winchellwang.github.io/Queens-ARC-Schedule/web_logo.jpg" />
+    <meta property="og:image:alt" content="Queen's ARC Schedule logo" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
@@ -14,7 +25,26 @@
     <link rel="manifest" href="manifest.json" />
     <link rel="icon" href="./web_logo.jpg" />
     <link rel="apple-touch-icon" href="./web_logo.jpg" />
-    <title>Queen's ARC Schedule</title>
+    <title>Queen's ARC Open Recreation Schedule</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Queen's ARC Schedule",
+        "url": "https://winchellwang.github.io/Queens-ARC-Schedule/",
+        "description": "A mobile-friendly schedule for Queen's University Athletics and Recreation Centre open recreation activities.",
+        "applicationCategory": "SportsApplication",
+        "operatingSystem": "Any",
+        "isAccessibleForFree": true,
+        "inLanguage": "en-CA",
+        "image": "https://winchellwang.github.io/Queens-ARC-Schedule/web_logo.jpg",
+        "author": {
+          "@type": "Person",
+          "name": "Winchell Wang",
+          "url": "https://winchellwang.github.io/"
+        }
+      }
+    </script>
     <script src="./assets/index.global.min.js"></script>
     <script src="./assets/ical.min.js"></script>
     <!-- Google tag (gtag.js) -->
@@ -58,6 +88,11 @@
       </div>
     </header>
     <main>
+      <p class="schedule-intro">
+        View the latest Queen's University ARC open recreation activities for
+        this week and next week. Filter by activity or location, then select an
+        event to add it to your calendar.
+      </p>
       <section class="filters" aria-label="Schedule filters">
         <div class="filter-field">
           <label for="activityFilter">Activity</label
@@ -84,6 +119,12 @@
           <span id="scheduleStatusText">Loading latest schedule…</span>
         </div>
         <div id="calendar"></div>
+        <noscript>
+          <p class="noscript-message">
+            JavaScript is required to display the interactive ARC schedule.
+            You can also download the <a href="gym.ics">ARC schedule calendar</a>.
+          </p>
+        </noscript>
       </section>
     </main>
     <div

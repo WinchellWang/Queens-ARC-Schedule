@@ -31,7 +31,7 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir _site
-          cp index.html about.html sw.js README.md manifest.json web_logo.jpg _site/
+          cp index.html about.html sw.js README.md manifest.json robots.txt sitemap.xml gym.ics web_logo.jpg _site/
           cp -R assets _site/assets
           touch _site/.nojekyll
 

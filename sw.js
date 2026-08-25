@@ -1,10 +1,12 @@
-const CACHE_NAME = "queens-arc-shell-v3";
+const CACHE_NAME = "queens-arc-shell-v4";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./about.html",
   "./sw.js",
   "./manifest.json",
+  "./robots.txt",
+  "./sitemap.xml",
   "./web_logo.jpg",
   "./assets/style.css",
   "./assets/app.js",
