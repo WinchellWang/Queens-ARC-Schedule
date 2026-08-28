@@ -26,6 +26,12 @@ For Android:
 2. Tap the three-dot menu in the top-right corner.
 3. Select "Add to Home screen". 
 
+# Contribution
+
+This project is open source, and created by a Ph.D student from Civil Engineering at Queen's University. If you find any issues or have suggestions for improvements, feel free to open an issue or submit a pull request on the GitHub repository.
+
+**[Find more about author](https://winchellwang.github.io/)**
+
 # Run locally with Docker
 
 Build and start the static site with Docker Compose:
@@ -47,10 +53,3 @@ To stop the site:
 ```bash
 docker compose down
 ```
-
-
-# Contribution
-
-This project is open source, and created by a Ph.D student from Civil Engineering at Queen's University. If you find any issues or have suggestions for improvements, feel free to open an issue or submit a pull request on the GitHub repository.
-
-**[Find more about author](https://winchellwang.github.io/)**
