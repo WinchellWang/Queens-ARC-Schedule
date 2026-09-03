@@ -152,62 +152,96 @@ function setScheduleLoading(isLoading) {
 function parseICS(data) {
   try {
     const component = new ICAL.Component(ICAL.parse(data));
-    allEvents = component
-      .getAllSubcomponents("vevent")
-      .flatMap((raw) => {
-        const status = raw.getFirstPropertyValue("status"),
-          event = new ICAL.Event(raw);
-        if (
-          (status && status.toUpperCase() === "CANCELLED") ||
-          !event.location?.trim()
-        )
-          return [];
-        const summary = event.summary || "Untitled activity",
-          lower = summary.toLowerCase();
-        let color = "#ea580c";
-        if (lower.includes("basketball")) color = "#f59e0b";
-        if (lower.includes("pickleball")) color = "#9333ea";
-        if (lower.includes("volleyball")) color = "#0d9488";
-        if (lower.includes("futsal") || lower.includes("soccer"))
-          color = "#be123c";
-        if (lower.includes("spikeball")) color = "#84cc16";
-        if (lower.includes("yoga") || lower.includes("pilates"))
-          color = "#16a34a";
-        if (
-          lower.includes("swim") ||
-          lower.includes("pool") ||
-          lower.includes("aquafit")
-        )
-          color = "#0284c7";
-        if (lower.includes("zumba") || lower.includes("dance"))
-          color = "#db2777";
-        if (lower.includes("barre")) color = "#7c3aed";
-        return [
-          {
-            title: summary,
-            start: event.startDate.toString(),
-            end: event.endDate.toString(),
-            color,
-            extendedProps: {
-              location: event.location,
-              icalStart: event.startDate,
-              icalEnd: event.endDate,
-              description: event.description || "",
-            },
-          },
-        ];
-      })
-      .filter(
-        (item) =>
-          new Date(item.start) < rangeEnd &&
-          new Date(item.end) >= rangeStart,
+    const eventGroups = new Map();
+    component.getAllSubcomponents("vevent").forEach((raw, index) => {
+      const uid = raw.getFirstPropertyValue("uid") || `missing-uid-${index}`;
+      if (!eventGroups.has(uid)) eventGroups.set(uid, []);
+      eventGroups.get(uid).push(raw);
+    });
+    allEvents = [...eventGroups.values()].flatMap((components) => {
+      const exceptions = components.filter((raw) =>
+        raw.hasProperty("recurrence-id"),
       );
+      return components
+        .filter((raw) => !raw.hasProperty("recurrence-id"))
+        .flatMap((raw) => {
+          const event = new ICAL.Event(raw),
+            exceptionMap = new Map(
+              exceptions.map((exception) => {
+                const exceptionEvent = new ICAL.Event(exception);
+                return [exceptionEvent.recurrenceId.toString(), exceptionEvent];
+              }),
+            );
+          if (!event.isRecurring())
+            return makeScheduleEvent(event, event.startDate, event.endDate);
+          const occurrences = [],
+            iterator = event.iterator();
+          let occurrence;
+          while ((occurrence = iterator.next())) {
+            if (occurrence.toJSDate() >= rangeEnd) break;
+            const exception = exceptionMap.get(occurrence.toString()),
+              occurrenceEvent = exception || event,
+              occurrenceStart = exception?.startDate || occurrence,
+              occurrenceEnd = exception?.endDate || occurrence.clone();
+            if (!exception) occurrenceEnd.addDuration(event.duration);
+            occurrences.push(
+              ...makeScheduleEvent(
+                occurrenceEvent,
+                occurrenceStart,
+                occurrenceEnd,
+              ),
+            );
+          }
+          return occurrences;
+        });
+    });
     populateDropdowns();
     applyFilters(false);
   } catch (error) {
     console.error("Could not parse schedule:", error);
-    throw error;;
+    throw error;
   }
+}
+function makeScheduleEvent(event, start, end) {
+  const status = event.component.getFirstPropertyValue("status");
+  if (
+    (status && status.toUpperCase() === "CANCELLED") ||
+    !event.location?.trim() ||
+    start.toJSDate() >= rangeEnd ||
+    end.toJSDate() < rangeStart
+  )
+    return [];
+  const summary = event.summary || "Untitled activity",
+    lower = summary.toLowerCase();
+  let color = "#ea580c";
+  if (lower.includes("basketball")) color = "#f59e0b";
+  if (lower.includes("pickleball")) color = "#9333ea";
+  if (lower.includes("volleyball")) color = "#0d9488";
+  if (lower.includes("futsal") || lower.includes("soccer")) color = "#be123c";
+  if (lower.includes("spikeball")) color = "#84cc16";
+  if (lower.includes("yoga") || lower.includes("pilates")) color = "#16a34a";
+  if (
+    lower.includes("swim") ||
+    lower.includes("pool") ||
+    lower.includes("aquafit")
+  )
+    color = "#0284c7";
+  if (lower.includes("zumba") || lower.includes("dance")) color = "#db2777";
+  if (lower.includes("barre")) color = "#7c3aed";
+  return [
+    {
+      title: summary,
+      start: start.toString(),
+      end: end.toString(),
+      color,
+      extendedProps: {
+        location: event.location,
+        icalStart: start,
+        icalEnd: end,
+        description: event.description || "",
+      },
+    },
+  ];
 }
 function populateDropdowns() {
   activityFilter.innerHTML = '<option value="all">All</option>';
