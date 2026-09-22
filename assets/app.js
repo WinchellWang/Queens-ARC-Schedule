@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       firstDay: 0,
       slotMinTime: "06:00:00",
-      slotMaxTime: "23:00:00",
+      slotMaxTime: "23:30:00",
       height: portraitQuery.matches ? "auto" : "100%",
       expandRows: true,
       nowIndicator: true,
