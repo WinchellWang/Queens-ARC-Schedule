@@ -23,14 +23,12 @@ const addDays = (date, days) => {
 };
 const today = new Date();
 today.setHours(0, 0, 0, 0);
-// Landscape shows Sun–Sat weeks; portrait shows rolling 7-day lists from today.
 const rangeStart = addDays(today, -today.getDay()),
-  rangeEnd = addDays(today, 14);
-const currentView = () =>
-  portraitQuery.matches ? "listRolling" : "timeGridWeek";
+  nextWeekStart = addDays(rangeStart, 7),
+  rangeEnd = addDays(rangeStart, 14);
+const currentView = () => (portraitQuery.matches ? "listWeek" : "timeGridWeek");
 const calendarHeight = () => (portraitQuery.matches ? "auto" : "100%");
-const periodStart = (next) =>
-  addDays(portraitQuery.matches ? today : rangeStart, next ? 7 : 0);
+const periodStart = (next) => (next ? nextWeekStart : rangeStart);
 const goToPeriod = (next) => {
   showingNextWeek = next;
   calendar.gotoDate(periodStart(next));
@@ -59,7 +57,18 @@ document.addEventListener("DOMContentLoaded", () => {
   calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
     initialView: currentView(),
     initialDate: today,
-    views: { listRolling: { type: "list", duration: { days: 7 } } },
+    views: {
+      listWeek: {
+        // Same as the time grid's column headers, e.g. "Wed 10/14".
+        listDayFormat: {
+          weekday: "short",
+          month: "numeric",
+          day: "numeric",
+          omitCommas: true,
+        },
+        listDaySideFormat: false,
+      },
+    },
     validRange: { start: rangeStart, end: rangeEnd },
     headerToolbar: { left: "thisWeek", center: "title", right: "nextWeek" },
     customButtons: {
@@ -95,6 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   portraitQuery.addEventListener("change", () => {
     calendar.setOption("height", calendarHeight());
+    applyFilters(false);
     calendar.changeView(currentView(), periodStart(showingNextWeek));
     calendar.updateSize();
   });
@@ -106,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 function updateNavigationState(info) {
   requestAnimationFrame(() => {
-    const isThisWeek = info.start.getTime() === periodStart(false).getTime();
+    const isThisWeek = info.start < nextWeekStart;
     const thisWeekButton = document.querySelector(".fc-thisWeek-button");
     const nextWeekButton = document.querySelector(".fc-nextWeek-button");
     if (thisWeekButton) thisWeekButton.disabled = isThisWeek;
@@ -277,7 +287,10 @@ function applyFilters(save) {
     allEvents.filter(
       (e) =>
         (a === "all" || e.title === a) &&
-        (l === "all" || e.extendedProps.location === l),
+        (l === "all" || e.extendedProps.location === l) &&
+        // The portrait list skips days with no events, so this hides past days.
+        (!portraitQuery.matches ||
+          e.extendedProps.icalStart.toJSDate() >= today),
     ),
   );
 }
