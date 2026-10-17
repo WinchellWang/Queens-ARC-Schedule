@@ -1,9 +1,8 @@
-const CACHE_NAME = "queens-arc-shell-v4";
+const CACHE_NAME = "queens-arc-shell-v5";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./about.html",
-  "./sw.js",
   "./manifest.json",
   "./robots.txt",
   "./sitemap.xml",
@@ -41,7 +40,8 @@ self.addEventListener("fetch", (event) => {
     return;
   }
   const url = new URL(request.url);
-  if (url.pathname.endsWith("/gym.ics")) {
+  // Schedule feeds are always fetched live by the app.
+  if (url.pathname.endsWith(".ics")) {
     return;
   }
   if (request.mode === "navigate") {

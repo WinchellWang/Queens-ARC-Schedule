@@ -47,6 +47,7 @@
     </script>
     <script src="./assets/index.global.min.js"></script>
     <script src="./assets/ical.min.js"></script>
+    <script src="./assets/app.js" defer></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-SM0J28NYS4"></script>
     <script>
@@ -54,20 +55,6 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-SM0J28NYS4');
-    </script>
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("./sw.js")
-            .then((registration) => {
-              console.log("Service Worker registered:", registration.scope);
-            })
-            .catch((error) => {
-              console.error("Service Worker registration failed:", error);
-            });
-        });
-      }
     </script>
     <link rel="stylesheet" href="./assets/style.css" />
   </head>
@@ -111,7 +98,7 @@
           hidden
         >
           <span class="schedule-spinner" aria-hidden="true"></span>
-          <span id="scheduleStatusText">Loading latest schedule…</span>
+          <span>Loading latest schedule…</span>
         </div>
         <div id="calendar"></div>
         <noscript>
@@ -153,7 +140,6 @@
         </button>
       </article>
     </div>
-    <script src="./assets/app.js" defer></script>
     <div
       id="scheduleToast"
       class="schedule-toast"
